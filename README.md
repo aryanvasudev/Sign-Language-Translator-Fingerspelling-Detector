@@ -1,7 +1,7 @@
 # **Sign Language Translator: Fingerspelling Detector**
 
 <p align="center">
-  <img src="https://your-image-url-here.com/project-logo.png" alt="Sign Language Translator Logo" width="200"/>
+  <img src="CodeCrushers.svg" alt="Sign Language Translator Logo" width="200"/>
 </p>
 
 <p align="center">
@@ -49,17 +49,59 @@ To start the Sign Language Translator, run:
 ```bash
 will get this asap
 ```  
-<!-- 
+
 ### Commands:
-- **Sign to Text**: Translate ASL fingerspelling into text.  
-- **Text to Sign**: Display fingerspelling animations for input text.  
-- **Speech Output**: Enable audible output for translated text.   
--->
+- **Sign to Text**: Project Under Development.  
+- **Text to Sign**: Project Under Development.  
+- **Speech Output**: Project Under Development.   
+
 
 ## 📂 **Project Structure**
 
 ```plaintext
-    yet to be made
+[augmented-data]
+    ├── [0]
+    ├── [1]
+    ├── [10]
+    ├── [11]
+    ├── [12]
+    ├── [13]
+    ├── [14]
+    ├── [15]
+    ├── [16]
+    ├── [17]
+    ├── [18]
+    ├── [19]
+    ├── [2]
+    ├── [20]
+    ├── [21]
+    ├── [22]
+    ├── [23]
+    ├── [24]
+    ├── [25]
+    ├── [3]
+    ├── [4]
+    ├── [5]
+    ├── [6]
+    ├── [7]
+    ├── [8]
+    └── [9]
+[datasets]
+    └── dataset.pickle
+[docs]
+    ├── .project_structure_filter
+    ├── .project_structure_ignore
+    └── project_structure.txt
+LICENSE
+[main-Programs]
+    ├── augment-data.py
+    ├── collect-images.py
+    ├── create_Dataset.py
+    ├── model-test.py
+    └── train_classifier.py
+[model]
+    └── model.p
+README.md
 ```
 
 ## 🤝 **Contributing**
@@ -81,5 +123,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://github.com/JashanMaan28">Jashanpreet Singh</a> and <a href="">Aryan</a>. Team CodeCrushers
+  Made with ❤️ by <a href="https://github.com/JashanMaan28">Jashanpreet Singh</a> and <a href="https://github.com/aryanvasudev">Aryan</a>. Team CodeCrushers
 </p>
