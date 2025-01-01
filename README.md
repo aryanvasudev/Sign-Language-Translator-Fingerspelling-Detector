@@ -5,7 +5,7 @@
 </p> -->
 
 <p align="center">
-  <img src="CodeCrushers.svg" alt="Sign Language Translator Logo" width="200" style="border-radius: 50%;"/>
+  <img src="CodeCrushers(1).svg" alt="Sign Language Translator Logo" width="200" style="border-radius: 50%;"/>
 </p>
 
 
