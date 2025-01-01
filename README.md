@@ -41,7 +41,6 @@
    ```bash
    pip install -r requirements.txt
    ```
-NOTE -- requirement.txt will be added soon. As the project gets completed. Thank You
 
 ## 🖥️ **Usage**
 
@@ -59,6 +58,10 @@ will get this asap
 ## 📂 **Project Structure**
 
 ```plaintext
+--- Folder Structure ---
+.env
+.env.example
+.gitignore
 [augmented-data]
     ├── [0]
     ├── [1]
@@ -86,22 +89,36 @@ will get this asap
     ├── [7]
     ├── [8]
     └── [9]
+CODE_OF_CONDUCT.md
 [datasets]
     └── dataset.pickle
 [docs]
-    ├── .project_structure_filter
-    ├── .project_structure_ignore
-    └── project_structure.txt
+    └── .project_structure_filter
 LICENSE
-[main-Programs]
-    ├── augment-data.py
-    ├── collect-images.py
-    ├── create_Dataset.py
-    ├── model-test.py
-    └── train_classifier.py
+[logo]
+    └── CodeCrushers.png
 [model]
     └── model.p
+[model-creation]
+    ├── augment_data.py
+    ├── collect_images.py
+    ├── create_Dataset.py
+    ├── model_test.py
+    ├── text_fix.py
+    ├── train_classifier.py
+    ├── voice.py
+    └── [__pycache__]
+        ├── text_fix.cpython-310.pyc
+        └── voice.cpython-310.pyc
 README.md
+requirements.txt
+[UI]
+    ├── [assets]
+        └── [frame0]
+            ├── button_1.png
+            ├── button_2.png
+            └── entry_1.png
+    └── gui.py
 ```
 
 ## 🤝 **Contributing**
