@@ -2,29 +2,26 @@ import pickle
 import cv2
 import mediapipe as mp
 import numpy as np
+from voice import text_to_speech_and_play  # Import the function from voice.py
 
+# Load the model
 model_dict = pickle.load(open('./model/model.p', 'rb'))
 model = model_dict['model']
 
+# Initialize webcam
 cap = cv2.VideoCapture(0)
 
+# Initialize Mediapipe Hands and Drawing utilities
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
 hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
 
-labels_dict = {i: chr(65 + i) for i in range(26)} # Approach 1 -- Short Better with ASCII
+# Define labels dictionary for mapping predictions to lowercase characters (a-z)
+labels_dict = {i: chr(97 + i) for i in range(26)}  # ASCII mapping for a-z
 
-# labels_dict = {
-#     0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
-#     5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: 'J',
-#     10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O',
-#     15: 'P', 16: 'Q', 17: 'R', 18: 'S', 19: 'T',
-#     20: 'U', 21: 'V', 22: 'W', 23: 'X', 24: 'Y',
-#     25: 'Z'
-# } # Approach 2 -- Long but more readable
-
+# Variables to store detected sentence and characters
 detected_sentence = []
 current_char = "" 
 last_confirmed_char = ""
@@ -40,6 +37,7 @@ while True:
 
     H, W, _ = frame.shape
 
+    # Convert frame to RGB for Mediapipe processing
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = hands.process(frame_rgb)
 
@@ -49,6 +47,7 @@ while True:
             x_ = []
             y_ = []
 
+            # Extract normalized coordinates of hand landmarks
             for i in range(len(hand_landmarks.landmark)):
                 x = hand_landmarks.landmark[i].x
                 y = hand_landmarks.landmark[i].y
@@ -64,6 +63,7 @@ while True:
 
             data_aux_list.append(data_aux)
 
+            # Draw hand landmarks on the frame
             mp_drawing.draw_landmarks(
                 frame,
                 hand_landmarks,
@@ -75,10 +75,11 @@ while True:
         current_char_list = [] 
 
         for data_aux in data_aux_list:
-            if len(data_aux) == 42:
+            if len(data_aux) == 42:  # Ensure correct input length for prediction
                 prediction = model.predict([np.asarray(data_aux)])
                 predicted_character = labels_dict[int(prediction[0])]
 
+                # Check if model supports confidence probabilities
                 if hasattr(model, "predict_proba"):
                     confidence = model.predict_proba([np.asarray(data_aux)])[0][int(prediction[0])]
                 else:
@@ -91,19 +92,26 @@ while True:
     else:
         current_char = last_confirmed_char if last_confirmed_char else "No Hand Detected"
 
-    sentence = ' '.join(detected_sentence)
-    cv2.putText(frame, sentence, (50, H - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+    # Display detected sentence on the frame
+    sentence_displayed = ' '.join(detected_sentence)
+    cv2.putText(frame, sentence_displayed, (50, H - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
 
+    # Display current character on the frame
     cv2.putText(frame, current_char, (50, H - 100), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3, cv2.LINE_AA)
 
     cv2.imshow('Sign Language Detector', frame)
 
     key = cv2.waitKey(1) & 0xFF
-    if key == 13:  # Enter key pressed
+    
+    if key == 13:  # Enter key pressed (append character)
         detected_sentence.append(current_char.split(" ")[0])  
         last_confirmed_char = current_char.split(" ")[0] 
 
-    if key == ord('q'):
+    if key == ord('z'):  # Z key pressed (convert full sentence to speech)
+        full_sentence = ' '.join(detected_sentence).strip()  # Join words into a single sentence without extra spaces or breaks
+        text_to_speech_and_play(full_sentence)  # Convert full sentence to speech
+
+    if key == ord('q'):  # Quit key pressed
         break
 
 cap.release()
