@@ -108,18 +108,16 @@ while True:
         detected_sentence.append(current_char.split(" ")[0])  
         last_confirmed_char = current_char.split(" ")[0] 
 
-    if key == ord('z'):  # Z key pressed (convert full sentence to speech)
-        full_sentence_raw = ' '.join(detected_sentence).strip()  # Join words into a single sentence without extra spaces or breaks
-        
-        # Use generate_sentences to create a meaningful sentence
-        meaningful_sentence = generate_sentences(full_sentence_raw)
-        
-        print("Generated Sentence:", meaningful_sentence)  # Debugging output
-        
-        # Use text_to_speech_and_play to speak the generated sentence
-        text_to_speech_and_play(meaningful_sentence)
+    if key == ord('z'):
+        input_text = ' '.join(detected_sentence).strip()
+        print("Full Sentence:", input_text)
+        output = generate_sentences(input_text)
+        print("Generated Sentence:", output)
+        text_to_speech_and_play(output)
+        detected_sentence = []
 
-    if key == ord('q'):  # Quit key pressed
+
+    if key == ord('q'):
         break
 
 cap.release()

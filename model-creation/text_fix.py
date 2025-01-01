@@ -30,8 +30,9 @@ def generate_sentences(input_text):
                 "Your task is to correct grammar, punctuation, and spacing errors in the provided input. "
                 "Do not add, translate, rephrase, or modify any part of the input beyond necessary corrections. "
                 "Do not explain your corrections, include extra text, or change the structure of the input unnecessarily. "
-                "Return the corrected text exactly as provided in the input format. "
                 "If no corrections are needed, return the input text exactly as it is, without any changes."
+                "Only output the corrected text and no extra information. about the corrections or for the corrections."
+                "Do not give information about the words or the context of the input." 
             )
         },
         {
@@ -39,6 +40,7 @@ def generate_sentences(input_text):
             "content": input_text
         }
     ],
+
     "temperature": 0.0,  # Ensures deterministic output for correction tasks
     "top_p": 1.0,        # Ensures all probability mass is considered for deterministic behavior
     "max_tokens": len(input_text.split()) + 10,  # Allows sufficient tokens for corrected output
@@ -47,6 +49,7 @@ def generate_sentences(input_text):
     "logit_bias": {      # Penalizes the model from generating extra explanations or outputs
         "<extra_token>": -100  # Replace <extra_token> with tokens corresponding to unwanted output
     }
+
 }
 
 
