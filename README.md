@@ -1,7 +1,7 @@
 # **Sign Language Translator: Fingerspelling Detector**
 
 <p align="center">
-  <img src="CodeCrushers.png" alt="Sign Language Translator Logo" width="200"/>
+  <img src="logo/CodeCrushers.png" alt="Sign Language Translator Logo" width="200"/>
 </p>
 
 <p align="center">
