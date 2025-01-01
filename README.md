@@ -1,13 +1,8 @@
 # **Sign Language Translator: Fingerspelling Detector**
-<!-- 
-<p align="center">
-  <img src="CodeCrushers.svg" alt="Sign Language Translator Logo" width="200"/>
-</p> -->
 
 <p align="center">
-  <img src="CodeCrushers(1).svg" alt="Sign Language Translator Logo" width="200" style="border-radius: 50%;"/>
+  <img src="CodeCrushers.png" alt="Sign Language Translator Logo" width="200"/>
 </p>
-
 
 <p align="center">
   <b>An innovative AI-powered tool designed to bridge communication gaps by translating American Sign Language (ASL) fingerspelling into text, converting text back into fingerspelling animations, and providing an integrated speech system for audible output. This project leverages state-of-the-art machine learning and computer vision technologies to enable real-time, seamless, and accessible communication for all users.</b>
