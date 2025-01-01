@@ -2,7 +2,8 @@ import pickle
 import cv2
 import mediapipe as mp
 import numpy as np
-from voice import text_to_speech_and_play  # Import the function from voice.py
+from voice import text_to_speech_and_play
+from text_fix import generate_sentences  # Import generate_sentences from text_fix
 
 # Load the model
 model_dict = pickle.load(open('./model/model.p', 'rb'))
@@ -87,16 +88,16 @@ while True:
 
                 current_char_list.append(f"{predicted_character} ({confidence * 100:.2f}%)")
 
-        current_char = " | ".join(current_char_list)
+        current_char = " | ".join(current_char_list).upper()  # Capitalize current character(s)
 
     else:
-        current_char = last_confirmed_char if last_confirmed_char else "No Hand Detected"
+        current_char = last_confirmed_char.upper() if last_confirmed_char else "NO HAND DETECTED"
 
-    # Display detected sentence on the frame
-    sentence_displayed = ' '.join(detected_sentence)
+    # Display detected sentence on the frame (capitalized)
+    sentence_displayed = ' '.join(detected_sentence).upper()
     cv2.putText(frame, sentence_displayed, (50, H - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
 
-    # Display current character on the frame
+    # Display current character on the frame (capitalized)
     cv2.putText(frame, current_char, (50, H - 100), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3, cv2.LINE_AA)
 
     cv2.imshow('Sign Language Detector', frame)
@@ -108,8 +109,15 @@ while True:
         last_confirmed_char = current_char.split(" ")[0] 
 
     if key == ord('z'):  # Z key pressed (convert full sentence to speech)
-        full_sentence = ' '.join(detected_sentence).strip()  # Join words into a single sentence without extra spaces or breaks
-        text_to_speech_and_play(full_sentence)  # Convert full sentence to speech
+        full_sentence_raw = ' '.join(detected_sentence).strip()  # Join words into a single sentence without extra spaces or breaks
+        
+        # Use generate_sentences to create a meaningful sentence
+        meaningful_sentence = generate_sentences(full_sentence_raw)
+        
+        print("Generated Sentence:", meaningful_sentence)  # Debugging output
+        
+        # Use text_to_speech_and_play to speak the generated sentence
+        text_to_speech_and_play(meaningful_sentence)
 
     if key == ord('q'):  # Quit key pressed
         break
