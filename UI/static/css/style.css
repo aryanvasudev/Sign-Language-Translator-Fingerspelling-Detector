@@ -1,0 +1,162 @@
+:root {
+    --bg-dark: #1a1f25;
+    --bg-panel: #242b33;
+    --text-primary: rgba(255, 255, 255, 0.87);
+    --text-secondary: #888;
+    --accent-purple: #9333ea;
+    --accent-green: #22c55e;
+    --accent-red: #ef4444;
+    --border-radius: 8px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+header {
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-panel);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.github-icon {
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.panel {
+    background-color: var(--bg-panel);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+h3 {
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.camera-box,
+.sign-output {
+    aspect-ratio: 16/9;
+    background-color: var(--bg-dark);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.camera-placeholder,
+.sign-placeholder {
+    color: var(--text-secondary);
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.record-btn {
+    background-color: var(--accent-red);
+    color: white;
+}
+
+.stop-btn {
+    background-color: var(--accent-red);
+    color: white;
+}
+
+.convert-text-btn {
+    background-color: var(--accent-purple);
+    color: white;
+}
+
+.convert-speech-btn {
+    background-color: var(--accent-green);
+    color: white;
+}
+
+.speak-btn {
+    background-color: var(--accent-purple);
+    color: white;
+}
+
+.prediction-box,
+.output-box {
+    background-color: var(--bg-dark);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    min-height: 60px;
+    margin-bottom: 1rem;
+}
+
+textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
+    background-color: var(--bg-dark);
+    border: none;
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 1rem;
+}
+
+textarea:focus {
+    outline: 1px solid var(--accent-purple);
+}
+
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
