@@ -45,20 +45,19 @@
                     </div>
                     <button onclick="speakText()" class="speak-btn">🔊 Speak Text</button>
                 </div>
-
             </section>
 
             <!-- Right Panel -->
             <section class="panel">
                 <h2>Text to Sign Language</h2>
-                <textarea placeholder="Enter text here (English alphabets only)..."></textarea>
+                <textarea id="text-input" placeholder="Enter text here (English alphabets only)..."></textarea>
                 <div class="button-group">
-                    <button class="convert-text-btn">T Convert Text</button>
-                    <button class="convert-speech-btn">🎤 Convert Speech</button>
-                    <button class="stop-btn">⬛ Stop</button>
+                    <button onclick="convertText()" class="convert-text-btn">T Convert Text</button>
+                    <button onclick="convertSpeech()" class="convert-speech-btn">🎤 Convert Speech</button>
+                    <button onclick="stopConversion()" class="stop-btn">⬛ Stop</button>
                 </div>
                 <div class="sign-output">
-                    <div class="sign-placeholder">
+                    <div id="sign-display" class="sign-placeholder">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8ZM12 6C8.686 6 6 8.686 6 12C6 15.314 8.686 18 12 18C15.314 18 18 15.314 18 12C18 8.686 15.314 6 12 6Z"
@@ -72,4 +71,3 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
-

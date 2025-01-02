@@ -1,6 +1,8 @@
 import os
 import time
 from PIL import Image
+import base64
+from io import BytesIO
 
 # Dictionary mapping letters to image file paths
 SIGN_LANGUAGE_IMAGES = {
@@ -30,30 +32,39 @@ SIGN_LANGUAGE_IMAGES = {
     'X': 'datasets/letter_images/X.png',
     'Y': 'datasets/letter_images/Y.png',
     'Z': 'datasets/letter_images/Z.png',
-    ' ': None 
+    ' ': None
 }
 
-def display_image(image_path):
+def get_image_base64(image_path):
     if image_path:
-        img = Image.open(image_path)
-        img.show()
-        time.sleep(1)
-        img.close()  
-    else:
-        
-        print("Blank screen (space)")
-        time.sleep(1)
+        with Image.open(image_path) as img:
+            buffered = BytesIO()
+            img.save(buffered, format="PNG")
+            img_str = base64.b64encode(buffered.getvalue()).decode()
+            return img_str
+    return None
 
 def text_to_sign_language(text):
-    
     text = text.upper()
+    images_data = []
     for char in text:
         if char in SIGN_LANGUAGE_IMAGES:
-            display_image(SIGN_LANGUAGE_IMAGES[char])
+            img_path = SIGN_LANGUAGE_IMAGES[char]
+            if img_path:
+                img_base64 = get_image_base64(img_path)
+                images_data.append({
+                    'character': char,
+                    'image': img_base64
+                })
+            else:
+                images_data.append({
+                    'character': 'space',
+                    'image': None
+                })
         else:
             print(f"Character '{char}' not found in dictionary.")
+    return images_data
 
-# Example usage
 if __name__ == "__main__":
     input_text = "HELLO WORLD"
     text_to_sign_language(input_text)

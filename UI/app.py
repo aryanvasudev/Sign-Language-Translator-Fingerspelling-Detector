@@ -6,7 +6,10 @@ import pickle
 import time
 from functions.text_fix import generate_sentences
 from functions.voice import text_to_speech_and_play
+from functions.text_to_sign import text_to_sign_language
 import os
+from functions.speech_to_text import RealtimeSpeechToText, create_speech_recognizer
+
 
 app = Flask(__name__)
 
@@ -17,7 +20,7 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
 labels_dict = {i: chr(97 + i) for i in range(26)}
 
-# Global variables to store detection state
+# Global variables
 detected_sentence = []
 is_recording = False
 last_confirmed_char = ""
@@ -25,41 +28,30 @@ last_detection_time = time.time()
 stabilization_delay = 2.0
 stable_char = ""
 current_meaningful_sentence = ""
-
-# New variables for sign stabilization
 stability_buffer = []
-STABILITY_THRESHOLD = 5  # Number of consecutive same predictions needed
-STABILITY_TIME_WINDOW = 1.0  # Time window for stability check in seconds
+STABILITY_THRESHOLD = 5
+STABILITY_TIME_WINDOW = 1.0
 
 def check_sign_stability(prediction):
     global stability_buffer
     current_time = time.time()
-    
-    # Remove old predictions from buffer
     stability_buffer = [(pred, t) for pred, t in stability_buffer 
                        if current_time - t < STABILITY_TIME_WINDOW]
-    
-    # Add new prediction to buffer
     stability_buffer.append((prediction, current_time))
-    
-    # Check if we have enough consistent predictions
     if len(stability_buffer) >= STABILITY_THRESHOLD:
         recent_predictions = [pred for pred, _ in stability_buffer[-STABILITY_THRESHOLD:]]
         if all(pred == recent_predictions[0] for pred in recent_predictions):
             return True, recent_predictions[0]
-    
     return False, None
 
 def generate_frames():
     global is_recording, detected_sentence, last_confirmed_char, last_detection_time, stable_char
-    
     cap = cv2.VideoCapture(0)
-    
     while True:
         ret, frame = cap.read()
         if not ret:
             break
-            
+
         data_aux_list = []
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = hands.process(frame_rgb)
@@ -69,26 +61,20 @@ def generate_frames():
                 data_aux = []
                 x_ = []
                 y_ = []
-                
                 for i in range(len(hand_landmarks.landmark)):
                     x = hand_landmarks.landmark[i].x
                     y = hand_landmarks.landmark[i].y
                     x_.append(x)
                     y_.append(y)
-                
+
                 for i in range(len(hand_landmarks.landmark)):
                     x = hand_landmarks.landmark[i].x
                     y = hand_landmarks.landmark[i].y
                     data_aux.append(x - min(x_))
                     data_aux.append(y - min(y_))
-                
+
                 data_aux_list.append(data_aux)
-                
-                mp.solutions.drawing_utils.draw_landmarks(
-                    frame,
-                    hand_landmarks,
-                    mp_hands.HAND_CONNECTIONS
-                )
+                mp.solutions.drawing_utils.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
         current_char_list = []
         for data_aux in data_aux_list:
@@ -107,27 +93,23 @@ def generate_frames():
             current_char, confidence = current_char_list[0]
             current_char = current_char.upper()
             
-            # Check sign stability
             is_stable, stable_prediction = check_sign_stability(current_char)
-            
             if is_stable and time.time() - last_detection_time >= stabilization_delay:
                 stable_char = stable_prediction
                 if is_recording and stable_char != last_confirmed_char:
                     detected_sentence.append(stable_char)
                     last_confirmed_char = stable_char
-                last_detection_time = time.time()
+                    last_detection_time = time.time()
 
-        # Display information on frame
-        cv2.putText(frame, f"Stable Character: {stable_char}", (10, 30), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.putText(frame, f"Sentence: {' '.join(detected_sentence)}", (10, 70), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        
-        # Add stability indicator
+        cv2.putText(frame, f"Stable Character: {stable_char}", (10, 30),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(frame, f"Sentence: {' '.join(detected_sentence)}", (10, 70),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
         stability_status = "Stable" if len(stability_buffer) >= STABILITY_THRESHOLD else "Unstable"
         cv2.putText(frame, f"Sign Status: {stability_status}", (10, 110),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, 
-                    (0, 255, 0) if stability_status == "Stable" else (0, 0, 255), 2)
+                   cv2.FONT_HERSHEY_SIMPLEX, 1,
+                   (0, 255, 0) if stability_status == "Stable" else (0, 0, 255), 2)
 
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
@@ -141,14 +123,14 @@ def index():
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+                   mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/start_recording', methods=['POST'])
 def start_recording():
     global is_recording, detected_sentence, stability_buffer
     is_recording = True
     detected_sentence = []
-    stability_buffer = []  # Reset stability buffer
+    stability_buffer = []
     return jsonify({'status': 'success'})
 
 @app.route('/stop_recording', methods=['POST'])
@@ -179,6 +161,22 @@ def speak_text():
             return jsonify({'status': 'error', 'message': 'No text to speak'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
+
+@app.route('/convert_text', methods=['POST'])
+def convert_text():
+    text = request.json.get('text', '')
+    if not text:
+        return jsonify({'status': 'error', 'message': 'No input found'})
+    try:
+        images_data = text_to_sign_language(text)
+        return jsonify({
+            'status': 'success', 
+            'message': 'Text converted successfully',
+            'images': images_data
+        })
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
