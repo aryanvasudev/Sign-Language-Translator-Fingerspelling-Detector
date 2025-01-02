@@ -1,11 +1,10 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from dotenv import load_dotenv
-import os  # For loading .env files
 
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"X:\Aryan\Documents\Coding\PROJECTS\Sign-Language-Translator-Fingerspelling-Detector\UI\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"E:\Sign Language Translator\Sign-Language-Translator-Fingerspelling-Detector\UI\assets\frame0")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)

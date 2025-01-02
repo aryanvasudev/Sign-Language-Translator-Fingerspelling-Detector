@@ -9,19 +9,16 @@ if not API_KEY:
 
 BASE_URL = "https://api.perplexity.ai"
 
-# Function to process unorganized words and generate proper sentences
 def generate_sentences(input_text):
-    """
-    Uses the Perplexity API to convert unorganized words into proper sentences.
-    """
+    
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
 
-    # Define the payload for the API request
+    
     payload = {
-    "model": "llama-3.1-sonar-small-128k-online",  # Cost-effective model
+    "model": "llama-3.1-sonar-small-128k-online",  
     "messages": [
         {
             "role": "system",
@@ -43,24 +40,21 @@ def generate_sentences(input_text):
         }
     ],
 
-    "temperature": 0.0,  # Ensures deterministic output for correction tasks
-    "top_p": 1.0,        # Ensures all probability mass is considered for deterministic behavior
-    "max_tokens": len(input_text.split()) + 10,  # Allows sufficient tokens for corrected output
-    "stop": None,        # Ensures the model doesn't stop prematurely
-    "n": 1,              # Returns only one response
-    "logit_bias": {      # Penalizes the model from generating extra explanations or outputs
-        "<extra_token>": -100  # Replace <extra_token> with tokens corresponding to unwanted output
+    "temperature": 0.0,  
+    "top_p": 1.0,        
+    "max_tokens": len(input_text.split()) + 10, 
+    "stop": None,        
+    "n": 1,              
+    "logit_bias": {
+        "<extra_token>": -100 
     }
 
 }
 
 
     try:
-        # Make the API request
         response = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-
-        # Extract and return the generated response
+        response.raise_for_status()
         result = response.json()
         return result.get("choices", [{}])[0].get("message", {}).get("content", "No response generated.")
     
@@ -69,10 +63,7 @@ def generate_sentences(input_text):
 
 # Example usage
 if __name__ == "__main__":
-    # Input: Unorganized words with errors and no spaces
     input_text = "d o n"
-    
-    # Generate proper sentences
     output = generate_sentences(input_text)
     
     print("Input Text:", input_text)
