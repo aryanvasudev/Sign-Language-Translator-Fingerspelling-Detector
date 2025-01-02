@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Language Translator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .github-icon {
+            margin-left: -10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-
 <body>
     <header>
         <h1>Sign Language Translator</h1>
-        <div class="github-icon">
+        <a href="https://github.com/JashanMaan28/Sign-Language-Translator-Fingerspelling-Detector" target="_blank" class="github-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M12 2C6.477 2 2 6.477 2 12C2 16.991 5.657 21.128 10.438 22.279C11.063 22.394 11.25 21.999 11.25 21.656V19.813C7.813 20.454 7.156 18.613 7.156 18.613C6.644 17.366 5.938 17.031 5.938 17.031C4.937 16.407 6.031 16.407 6.031 16.407C7.125 16.482 7.781 17.441 7.781 17.441C8.75 18.988 10.469 18.613 11.25 18.359C11.375 17.666 11.688 17.216 12 16.991C9.25 16.766 6.375 15.866 6.375 11.661C6.375 10.489 6.844 9.541 7.781 8.741C7.656 8.466 7.219 7.441 7.875 6.091C7.875 6.091 8.937 5.816 11.25 7.366C12.156 7.091 13.125 6.991 14.094 6.991C15.063 6.991 16.031 7.128 16.938 7.366C19.25 5.816 20.313 6.091 20.313 6.091C20.969 7.441 20.531 8.466 20.406 8.741C21.281 9.541 21.813 10.489 21.813 11.661C21.813 15.866 18.938 16.729 16.188 16.991C16.625 17.291 17 17.929 17 18.878V21.656C17 21.999 17.188 22.394 17.813 22.279C22.594 21.128 26.25 16.991 26.25 12C26.25 6.477 21.523 2 16 2H12Z"
                     fill="currentColor" />
             </svg>
-        </div>
+        </a>
     </header>
-
     <main>
         <div class="container">
             <!-- Left Panel -->
