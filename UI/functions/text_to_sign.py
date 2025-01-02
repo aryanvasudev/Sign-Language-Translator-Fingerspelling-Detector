@@ -1,5 +1,4 @@
 import os
-import time
 from PIL import Image
 import base64
 from io import BytesIO
@@ -47,6 +46,7 @@ def get_image_base64(image_path):
 def text_to_sign_language(text):
     text = text.upper()
     images_data = []
+    
     for char in text:
         if char in SIGN_LANGUAGE_IMAGES:
             img_path = SIGN_LANGUAGE_IMAGES[char]
@@ -63,8 +63,5 @@ def text_to_sign_language(text):
                 })
         else:
             print(f"Character '{char}' not found in dictionary.")
+            
     return images_data
-
-if __name__ == "__main__":
-    input_text = "HELLO WORLD"
-    text_to_sign_language(input_text)

@@ -8,7 +8,7 @@ from functions.text_fix import generate_sentences
 from functions.voice import text_to_speech_and_play
 from functions.text_to_sign import text_to_sign_language
 import os
-from functions.speech_to_text import RealtimeSpeechToText, create_speech_recognizer
+from functions.speech_to_text import speech_to_text
 
 
 app = Flask(__name__)
@@ -176,7 +176,34 @@ def convert_text():
         })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
+    
 
+@app.route('/convert_speech_to_sign', methods=['POST'])
+def convert_speech_to_sign():
+    try:
+        # First convert speech to text
+        text = speech_to_text()
+        
+        if text is None:
+            return jsonify({
+                'status': 'error',
+                'message': 'Could not understand speech'
+            })
+            
+        # Convert the text to sign language
+        images_data = text_to_sign_language(text)
+        
+        return jsonify({
+            'status': 'success',
+            'text': text,
+            'images': images_data
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        })
 
 if __name__ == '__main__':
     app.run(debug=True)
