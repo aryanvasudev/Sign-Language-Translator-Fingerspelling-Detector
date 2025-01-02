@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"E:\Sign Language Translator\Sign-Language-Translator-Fingerspelling-Detector\UI\build\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"\build\assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
