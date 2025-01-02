@@ -12,3 +12,4 @@ tensorflow_intel==2.18.0
 tqdm==4.67.1
 openai==0.28
 pyaudio==0.2.14
+wave

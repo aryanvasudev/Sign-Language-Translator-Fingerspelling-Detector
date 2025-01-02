@@ -3,7 +3,6 @@ import os
 import pyaudio
 import wave
 from dotenv import load_dotenv
-import threading
 
 # Load environment variables from .env file
 load_dotenv()
@@ -14,23 +13,37 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000  # Whisper works best with 16kHz audio
 CHUNK = 1024  # Buffer size for audio chunks
-RECORD_SECONDS = 5  # Length of each audio snippet to process
 
-def record_audio_to_file(filename):
-    """Records audio from the microphone and saves it to a WAV file."""
+def record_until_silence(filename, silence_threshold=500, silence_duration=2):
+    """
+    Records audio until silence is detected and saves it to a WAV file.
+    """
     audio = pyaudio.PyAudio()
     stream = audio.open(format=FORMAT, channels=CHANNELS,
                         rate=RATE, input=True,
                         frames_per_buffer=CHUNK)
+
+    print("Listening... Speak now.")
     frames = []
-    for _ in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+    silent_chunks = 0
+
+    while True:
         data = stream.read(CHUNK)
         frames.append(data)
+        volume = max(data)
+
+        if volume < silence_threshold:
+            silent_chunks += 1
+        else:
+            silent_chunks = 0
+
+        if silent_chunks > (RATE / CHUNK * silence_duration):
+            break
+
     stream.stop_stream()
     stream.close()
     audio.terminate()
 
-    # Save the recording to a WAV file
     with wave.open(filename, 'wb') as wf:
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(audio.get_sample_size(FORMAT))
@@ -38,21 +51,25 @@ def record_audio_to_file(filename):
         wf.writeframes(b''.join(frames))
 
 def transcribe_audio(filename):
-    """Transcribes the given audio file using OpenAI Whisper API."""
+    """
+    Transcribes the given audio file using OpenAI Whisper API.
+    """
     with open(filename, "rb") as audio_file:
         response = openai.Audio.transcribe(
             model="whisper-1",
             file=audio_file
         )
-        print("Transcription:", response["text"])
+        return response["text"]
 
-def real_time_transcription():
-    """Continuously records and transcribes audio in real time."""
-    while True:
-        filename = "temp_audio.wav"
-        record_audio_to_file(filename)
-        transcribe_audio(filename)
+def listen_and_transcribe():
+    """
+    Listens for speech, waits for silence, transcribes the speech, and prints it.
+    """
+    filename = "temp_audio.wav"
+    record_until_silence(filename)
+    print("Processing transcription...")
+    transcription = transcribe_audio(filename)
+    print("Transcription:", transcription)
 
 if __name__ == "__main__":
-    transcription_thread = threading.Thread(target=real_time_transcription)
-    transcription_thread.start()
+    listen_and_transcribe()
