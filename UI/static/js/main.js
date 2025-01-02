@@ -1,34 +1,33 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const video = document.getElementById('video');
-    const recordBtn = document.getElementById('record');
-    const stopBtn = document.getElementById('stop');
-    const predictionBox = document.getElementById('prediction');
-
     let stream = null;
     let recording = false;
 
-    recordBtn.addEventListener('click', async () => {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-        recording = true;
-        // Add recording logic
-    });
-
-    stopBtn.addEventListener('click', () => {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            video.srcObject = null;
-            recording = false;
-        }
-    });
-
+    // Record button functionality
     function startRecording() {
+        recording = true;
         fetch('/start_recording', {
             method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Start the video stream
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(videoStream => {
+                        stream = videoStream;
+                        document.getElementById('video').srcObject = stream;
+                    })
+                    .catch(error => console.error('Error accessing camera:', error));
+            }
         });
     }
 
+    // Stop button functionality
     function stopRecording() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            document.getElementById('video').srcObject = null;
+        }
+        recording = false;
+        
         fetch('/stop_recording', {
             method: 'POST'
         })
@@ -40,18 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update current prediction every second
     setInterval(() => {
-        fetch('/get_current_prediction')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('prediction-box').textContent = data.prediction;
-        });
+        if (recording) {
+            fetch('/get_current_prediction')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('prediction-box').textContent = data.prediction;
+            });
+        }
     }, 1000);
 
-    function speakText() {
-        // Placeholder for future implementation with ElevenLabs API
-        console.log('Speech functionality not implemented');
-    }
-
+    // Function for sending predictions (keep for future use)
     async function sendPredictionRequest(data) {
         try {
             const response = await fetch('/predict', {
@@ -62,9 +59,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(data)
             });
             const result = await response.json();
-            predictionBox.textContent = result.prediction;
+            document.getElementById('prediction-box').textContent = result.prediction;
         } catch (error) {
             console.error('Error:', error);
         }
     }
-});
+
+    // Placeholder for future speech functionality
+    function speakText() {
+        console.log('Speech functionality not implemented');
+    }
+
+    // Keep these functions for future implementation
+    function convertText() {
+        // Future implementation for text conversion
+    }
+
+    function convertSpeech() {
+        // Future implementation for speech conversion
+    }
+
+    // Initialize when document loads
+    document.addEventListener('DOMContentLoaded', () => {
+        // Any initialization code can go here
+    });

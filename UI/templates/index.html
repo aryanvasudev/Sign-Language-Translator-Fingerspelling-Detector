@@ -1,4 +1,3 @@
-<
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,48 +26,24 @@
             <section class="panel">
                 <h2>Sign Language to Text</h2>
                 <div class="camera-box">
-                    <div class="camera-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8ZM12 6C8.686 6 6 8.686 6 12C6 15.314 8.686 18 12 18C15.314 18 18 15.314 18 12C18 8.686 15.314 6 12 6Z"
-                                fill="currentColor" />
-                        </svg>
-                    </div>
+                    <img src="{{ url_for('video_feed') }}" width="100%">
                 </div>
                 <div class="button-group">
-                    <button class="record-btn">🎥 Record</button>
-                    <button class="stop-btn">⬛ Stop</button>
+                    <button onclick="startRecording()" class="record-btn">🎥 Record</button>
+                    <button onclick="stopRecording()" class="stop-btn">⬛ Stop</button>
                 </div>
                 <div class="prediction-section">
                     <h3>Current Prediction</h3>
-                    <div class="prediction-box">
+                    <div id="prediction-box" class="prediction-box">
                         <p>Predicted word will appear here...</p>
                     </div>
                 </div>
                 <div class="output-section">
                     <h3>Output Text</h3>
-                    <div class="output-box">
+                    <div id="output-box" class="output-box">
                         <p>Translated text will appear here...</p>
                     </div>
-                    <button class="speak-btn">🔊 Speak Text</button>
-                </div>
-
-                <div class="container">
-                    <div class="video-container">
-                        <img src="{{ url_for('video_feed') }}" width="100%">
-                        <button onclick="startRecording()">🎥 Record</button>
-                        <button onclick="stopRecording()">⬛ Stop</button>
-                    </div>
-                    
-                    <div class="text-container">
-                        <h3>Current Prediction</h3>
-                        <div id="prediction-box" class="prediction-box"></div>
-                        
-                        <h3>Output Text</h3>
-                        <div id="output-box" class="output-box"></div>
-                        
-                        <button onclick="speakText()">🔊 Speak Text</button>
-                    </div>
+                    <button onclick="speakText()" class="speak-btn">🔊 Speak Text</button>
                 </div>
 
             </section>
