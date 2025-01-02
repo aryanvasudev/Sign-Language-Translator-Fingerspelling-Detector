@@ -1,3 +1,4 @@
+<
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,6 +52,25 @@
                     </div>
                     <button class="speak-btn">🔊 Speak Text</button>
                 </div>
+
+                <div class="container">
+                    <div class="video-container">
+                        <img src="{{ url_for('video_feed') }}" width="100%">
+                        <button onclick="startRecording()">🎥 Record</button>
+                        <button onclick="stopRecording()">⬛ Stop</button>
+                    </div>
+                    
+                    <div class="text-container">
+                        <h3>Current Prediction</h3>
+                        <div id="prediction-box" class="prediction-box"></div>
+                        
+                        <h3>Output Text</h3>
+                        <div id="output-box" class="output-box"></div>
+                        
+                        <button onclick="speakText()">🔊 Speak Text</button>
+                    </div>
+                </div>
+
             </section>
 
             <!-- Right Panel -->
@@ -76,5 +96,5 @@
     </main>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
-
 </html>
+

@@ -22,6 +22,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function startRecording() {
+        fetch('/start_recording', {
+            method: 'POST'
+        });
+    }
+
+    function stopRecording() {
+        fetch('/stop_recording', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('output-box').textContent = data.meaningful_sentence;
+        });
+    }
+
+    // Update current prediction every second
+    setInterval(() => {
+        fetch('/get_current_prediction')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('prediction-box').textContent = data.prediction;
+        });
+    }, 1000);
+
+    function speakText() {
+        // Placeholder for future implementation with ElevenLabs API
+        console.log('Speech functionality not implemented');
+    }
+
     async function sendPredictionRequest(data) {
         try {
             const response = await fetch('/predict', {
