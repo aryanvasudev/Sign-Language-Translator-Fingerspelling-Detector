@@ -40,7 +40,16 @@ h1 {
 .github-icon {
     color: var(--text-primary);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
 }
+
+.github-icon svg {
+    width: 35px;
+    height: 35px;
+}
+
 
 .container {
     max-width: 1280px;
@@ -71,7 +80,7 @@ h3 {
 
 .camera-box,
 .sign-output {
-    aspect-ratio: 16/9;
+    aspect-ratio: 16/10;
     background-color: var(--bg-dark);
     border-radius: var(--border-radius);
     display: flex;
@@ -105,12 +114,12 @@ button:hover {
 }
 
 .record-btn {
-    background-color: var(--accent-red);
+    background-color: var(--accent-purple);
     color: white;
 }
 
 .stop-btn {
-    background-color: var(--accent-red);
+    background-color: var(--accent-green);
     color: white;
 }
 
@@ -120,7 +129,7 @@ button:hover {
 }
 
 .convert-speech-btn {
-    background-color: var(--accent-green);
+    background-color: var(--accent-red);
     color: white;
 }
 

@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Language Translator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .github-icon {
-            margin-left: -10px;
-            cursor: pointer;
-        }
-    </style>
 </head>
+
 <body>
     <header>
         <h1>Sign Language Translator</h1>
         <a href="https://github.com/JashanMaan28/Sign-Language-Translator-Fingerspelling-Detector" target="_blank" class="github-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M12 2C6.477 2 2 6.477 2 12C2 16.991 5.657 21.128 10.438 22.279C11.063 22.394 11.25 21.999 11.25 21.656V19.813C7.813 20.454 7.156 18.613 7.156 18.613C6.644 17.366 5.938 17.031 5.938 17.031C4.937 16.407 6.031 16.407 6.031 16.407C7.125 16.482 7.781 17.441 7.781 17.441C8.75 18.988 10.469 18.613 11.25 18.359C11.375 17.666 11.688 17.216 12 16.991C9.25 16.766 6.375 15.866 6.375 11.661C6.375 10.489 6.844 9.541 7.781 8.741C7.656 8.466 7.219 7.441 7.875 6.091C7.875 6.091 8.937 5.816 11.25 7.366C12.156 7.091 13.125 6.991 14.094 6.991C15.063 6.991 16.031 7.128 16.938 7.366C19.25 5.816 20.313 6.091 20.313 6.091C20.969 7.441 20.531 8.466 20.406 8.741C21.281 9.541 21.813 10.489 21.813 11.661C21.813 15.866 18.938 16.729 16.188 16.991C16.625 17.291 17 17.929 17 18.878V21.656C17 21.999 17.188 22.394 17.813 22.279C22.594 21.128 26.25 16.991 26.25 12C26.25 6.477 21.523 2 16 2H12Z"
+            <svg width="35" height="35" viewBox="0 0 98 98" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
                     fill="currentColor" />
             </svg>
         </a>
     </header>
+
     <main>
         <div class="container">
             <!-- Left Panel -->
@@ -32,9 +29,10 @@
                     <img src="{{ url_for('video_feed') }}" width="100%">
                 </div>
                 <div class="button-group">
-                    <button onclick="startRecording()" class="record-btn">🎥 Record</button>
-                    <button onclick="stopRecording()" class="stop-btn">⬛ Stop</button>
+                    <button onclick="startRecording()" class="record-btn">🔴 Record</button>
+                    <button onclick="stopRecording()" class="stop-btn">🟥 Stop</button>
                 </div>
+                <br>
                 <div class="prediction-section">
                     <h3>Current Prediction</h3>
                     <div id="prediction-box" class="prediction-box">
@@ -46,19 +44,13 @@
                     <div id="output-box" class="output-box">
                         <p>Translated text will appear here...</p>
                     </div>
-                    <button onclick="speakText()" class="speak-btn">🔊 Speak Text</button>
+                    <button onclick="speakText()" class="speak-btn">🔉 Speak Text</button>
                 </div>
             </section>
 
             <!-- Right Panel -->
             <section class="panel">
                 <h2>Text to Sign Language</h2>
-                <textarea id="text-input" placeholder="Enter text here (English alphabets only)..."></textarea>
-                <div class="button-group">
-                    <button onclick="convertText()" class="convert-text-btn">T Convert Text</button>
-                    <button onclick="convertSpeech()" class="convert-speech-btn">🎤 Convert Speech</button>
-                    <button onclick="stopConversion()" class="stop-btn">⬛ Stop</button>
-                </div>
                 <div class="sign-output">
                     <div id="sign-display" class="sign-placeholder">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -68,9 +60,17 @@
                         </svg>
                     </div>
                 </div>
+                <br>
+                <textarea id="text-input" placeholder="Enter text here (English alphabets only) . . ."></textarea>
+                <div class="button-group">
+                    <button onclick="convertText()" class="convert-text-btn">[ T ] Convert Text</button>
+                    <button onclick="convertSpeech()" class="convert-speech-btn">🎙️ Record Speech</button>
+                    <button onclick="stopConversion()" class="stop-btn">🔃 Convert Speech</button>
+                </div>
             </section>
         </div>
     </main>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
+
 </html>
