@@ -54,6 +54,6 @@ def text_to_sign_language(text):
             print(f"Character '{char}' not found in dictionary.")
 
 # Example usage
-input_text = "HELLO WORLD"
-text_to_sign_language(input_text)
-
+if __name__ == "__main__":
+    input_text = "HELLO WORLD"
+    text_to_sign_language(input_text)
