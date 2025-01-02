@@ -31,8 +31,10 @@ def generate_sentences(input_text):
                 "Do not add, translate, rephrase, or modify any part of the input beyond necessary corrections. "
                 "Do not explain your corrections, include extra text, or change the structure of the input unnecessarily. "
                 "If no corrections are needed, return the input text exactly as it is, without any changes."
-                "Only output the corrected text and no extra information. about the corrections or for the corrections."
-                "Do not give information about the words or the context of the input." 
+                "Only output the corrected text and no extra information about the corrections or for the corrections."
+                "Do not give information about the words or the context of the input."
+                "If there is a single word in the input, give the word in its correct form without adding anything else"
+                "If there are multiple words, separate them with spaces and give them in the correct order."
             )
         },
         {
