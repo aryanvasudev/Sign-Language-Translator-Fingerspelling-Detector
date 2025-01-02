@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import time
 from functions.text_fix import generate_sentences
+from functions.voice import text_to_speech_and_play
 import os
 
 app = Flask(__name__)
@@ -23,6 +24,31 @@ last_confirmed_char = ""
 last_detection_time = time.time()
 stabilization_delay = 2.0
 stable_char = ""
+current_meaningful_sentence = ""
+
+# New variables for sign stabilization
+stability_buffer = []
+STABILITY_THRESHOLD = 5  # Number of consecutive same predictions needed
+STABILITY_TIME_WINDOW = 1.0  # Time window for stability check in seconds
+
+def check_sign_stability(prediction):
+    global stability_buffer
+    current_time = time.time()
+    
+    # Remove old predictions from buffer
+    stability_buffer = [(pred, t) for pred, t in stability_buffer 
+                       if current_time - t < STABILITY_TIME_WINDOW]
+    
+    # Add new prediction to buffer
+    stability_buffer.append((prediction, current_time))
+    
+    # Check if we have enough consistent predictions
+    if len(stability_buffer) >= STABILITY_THRESHOLD:
+        recent_predictions = [pred for pred, _ in stability_buffer[-STABILITY_THRESHOLD:]]
+        if all(pred == recent_predictions[0] for pred in recent_predictions):
+            return True, recent_predictions[0]
+    
+    return False, None
 
 def generate_frames():
     global is_recording, detected_sentence, last_confirmed_char, last_detection_time, stable_char
@@ -75,24 +101,34 @@ def generate_frames():
                 else:
                     confidence = 100.0
                     
-                current_char_list.append(f"{predicted_character} ({confidence:.2f}%)")
+                current_char_list.append((predicted_character, confidence))
 
         if current_char_list:
-            current_char = current_char_list[0].split()[0].upper()
-            if current_char != stable_char and time.time() - last_detection_time >= stabilization_delay:
-                stable_char = current_char
-                if is_recording:
-                    detected_sentence.append(current_char)
-                last_confirmed_char = current_char
+            current_char, confidence = current_char_list[0]
+            current_char = current_char.upper()
+            
+            # Check sign stability
+            is_stable, stable_prediction = check_sign_stability(current_char)
+            
+            if is_stable and time.time() - last_detection_time >= stabilization_delay:
+                stable_char = stable_prediction
+                if is_recording and stable_char != last_confirmed_char:
+                    detected_sentence.append(stable_char)
+                    last_confirmed_char = stable_char
                 last_detection_time = time.time()
 
-        # Add text overlays
+        # Display information on frame
         cv2.putText(frame, f"Stable Character: {stable_char}", (10, 30), 
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         cv2.putText(frame, f"Sentence: {' '.join(detected_sentence)}", (10, 70), 
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        
+        # Add stability indicator
+        stability_status = "Stable" if len(stability_buffer) >= STABILITY_THRESHOLD else "Unstable"
+        cv2.putText(frame, f"Sign Status: {stability_status}", (10, 110),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, 
+                    (0, 255, 0) if stability_status == "Stable" else (0, 0, 255), 2)
 
-        # Convert frame to bytes for streaming
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
         yield (b'--frame\r\n'
@@ -109,30 +145,40 @@ def video_feed():
 
 @app.route('/start_recording', methods=['POST'])
 def start_recording():
-    global is_recording, detected_sentence
+    global is_recording, detected_sentence, stability_buffer
     is_recording = True
-    detected_sentence = []  # Reset the sentence when starting new recording
+    detected_sentence = []
+    stability_buffer = []  # Reset stability buffer
     return jsonify({'status': 'success'})
 
 @app.route('/stop_recording', methods=['POST'])
 def stop_recording():
-    global is_recording, detected_sentence
+    global is_recording, detected_sentence, current_meaningful_sentence
     is_recording = False
-    
-    # Join the detected characters and convert to meaningful sentence
     raw_text = ' '.join(detected_sentence)
-    meaningful_sentence = generate_sentences(raw_text)
-    
+    current_meaningful_sentence = generate_sentences(raw_text)
     return jsonify({
         'status': 'success',
         'raw_text': raw_text,
-        'meaningful_sentence': meaningful_sentence
+        'meaningful_sentence': current_meaningful_sentence
     })
 
 @app.route('/get_current_prediction')
 def get_current_prediction():
     global stable_char
     return jsonify({'prediction': stable_char})
+
+@app.route('/speak_text', methods=['POST'])
+def speak_text():
+    global current_meaningful_sentence
+    try:
+        if current_meaningful_sentence:
+            text_to_speech_and_play(current_meaningful_sentence)
+            return jsonify({'status': 'success', 'message': 'Audio played successfully'})
+        else:
+            return jsonify({'status': 'error', 'message': 'No text to speak'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)

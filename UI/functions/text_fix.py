@@ -18,20 +18,31 @@ def generate_sentences(input_text):
 
     
     payload = {
-    "model": "llama-3.1-sonar-small-128k-online",  
+    "model": "llama-3.1-sonar-small-128k-online",
     "messages": [
         {
             "role": "system",
             "content": (
-                "You are a specialized AI assistant for correcting text input. "
-                "Your task is to correct grammar, punctuation, and spacing errors in the provided input. "
-                "Do not add, translate, rephrase, or modify any part of the input beyond necessary corrections. "
-                "Do not explain your corrections, include extra text, or change the structure of the input unnecessarily. "
-                "If no corrections are needed, return the input text exactly as it is, without any changes."
-                "Only output the corrected text and no extra information about the corrections or for the corrections."
-                "Do not give information about the words or the context of the input."
-                "If there is a single word in the input, give the word in its correct form without adding anything else"
-                "If there are multiple words, separate them with spaces and give them in the correct order."
+                "You are a specialized AI assistant functioning as a spell checker and auto-corrector. "
+                "Your task involves the following steps: "
+                "1. If the input contains individual letters separated by spaces, join them into coherent words. "
+                "2. Check and correct the spelling of words. "
+                "3. Reorganize the corrected words into a meaningful and grammatically correct sentence. "
+                "4. Ensure proper punctuation, capitalization, and spacing. "
+                "5. Maintain the original intent and meaning of the input text as much as possible. "
+                "Guidelines: "
+                "1. Always treat the input as potentially containing disjointed letters, spelling errors, or scrambled words. "
+                "2. Prioritize clarity and correctness in your corrections. "
+                "3. Output only the final corrected text without additional explanations, metadata, or comments. "
+                "Examples: "
+                "Input: T H I S I S A T E S T S E N T E N C E "
+                "Output: This is a test sentence. "
+                "Input: THIAS SI A TESST SNETENCE "
+                "Output: This is a test sentence. "
+                "Input: T H I A S I S A T O E S T S E M N T E N R C E "
+                "Output: This is a test sentence. "
+                "Input: P R O G R M N G IS F U N "
+                "Output: Programming is fun."
             )
         },
         {
@@ -39,18 +50,13 @@ def generate_sentences(input_text):
             "content": input_text
         }
     ],
-
-    "temperature": 0.0,  
-    "top_p": 1.0,        
-    "max_tokens": len(input_text.split()) + 10, 
-    "stop": None,        
-    "n": 1,              
-    "logit_bias": {
-        "<extra_token>": -100 
-    }
-
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_tokens": len(input_text.split()) + 15,
+    "stop": None,
+    "n": 1,
+    "logit_bias": {}
 }
-
 
     try:
         response = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers)
@@ -63,9 +69,8 @@ def generate_sentences(input_text):
 
 # Example usage
 if __name__ == "__main__":
-    input_text = "d o n"
+    input_text = "A L P H O A Z B E T"
     output = generate_sentences(input_text)
     
     print("Input Text:", input_text)
     print("Generated Sentences:", output)
-
