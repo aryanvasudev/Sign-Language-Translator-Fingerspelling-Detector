@@ -1,8 +1,9 @@
+Flask==3.1.0
 mediapipe==0.10.20
 numpy==2.2.1
 opencv_contrib_python==4.10.0.84
 opencv_python==4.10.0.84
-Pillow==11.0.0
+Pillow==11.1.0
 playsound==1.2.2
 python-dotenv==1.0.1
 Requests==2.32.3
@@ -10,6 +11,3 @@ scikit_learn==1.6.0
 tensorflow==2.18.0
 tensorflow_intel==2.18.0
 tqdm==4.67.1
-openai==0.28
-pyaudio==0.2.14
-wave
