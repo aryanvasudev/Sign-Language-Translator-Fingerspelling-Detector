@@ -107,9 +107,6 @@ LICENSE
     ├── text_fix.py
     ├── train_classifier.py
     ├── voice.py
-    └── [__pycache__]
-        ├── text_fix.cpython-310.pyc
-        └── voice.cpython-310.pyc
 README.md
 requirements.txt
 [UI]
