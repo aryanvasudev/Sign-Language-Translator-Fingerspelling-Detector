@@ -10,3 +10,5 @@ scikit_learn==1.6.0
 tensorflow==2.18.0
 tensorflow_intel==2.18.0
 tqdm==4.67.1
+openai==1.58.1
+pyaudio==0.2.14
