@@ -15,18 +15,28 @@
 ## 📑 **Table of Contents**
 
 - [Features](#-features)  
+- [Demo](#-demo)  
 - [Installation](#-installation)  
 - [Usage](#-usage)  
 - [Project Structure](#-project-structure)  
+- [Flow Charts](#-flow-charts)  
+- [Technical Overview](#-technical-overview)  
+- [Glossary](#-glossary)  
+- [Future Plans](#-future-plans)  
+- [User Feedback](#-user-feedback)  
 - [Contributing](#-contributing)  
 - [License](#-license)  
 
 ## 🌟 **Features**
 
-- 🖐️ Real-time ASL fingerspelling detection  
-- 🔡 Converts signs to text and text to signs  
-- 🔊 Integrated speech system for spoken output  
-- 📂 Easy-to-use and lightweight for accessibility 
+- 🖐️ **Real-time ASL Fingerspelling Detection**: Detects and translates ASL fingerspelling gestures into text in real-time.  
+- 🔡 **Text-to-Sign Conversion**: Converts input text into fingerspelling animations, bridging communication gaps for non-ASL speakers.  
+- 🔊 **Integrated Speech System**: Converts text to speech, making the communication output audible.  
+- 📂 **Lightweight and User-Friendly**: Optimized for accessibility and ease of use.  
+
+## 🎥 **Demo**
+
+A live demo showcasing the project's features will be available soon. Stay tuned! The link to the YouTube video will be added here: [Demo Link](#)
 
 ## 🚀 **Installation**
 
@@ -59,12 +69,6 @@ To start the Sign Language Translator, run:
 ```bash
 python app.py
 ```  
-
-### Commands:
-- **Sign to Text**: Project Under Development.  
-- **Text to Sign**: Project Under Development.  
-- **Speech Output**: Project Under Development.   
-
 
 ## 📂 **Project Structure**
 
@@ -135,6 +139,58 @@ requirements.txt
     └── [templates]
         └── index.html
 ```
+
+### Features:
+- **Sign to Text**: Translates ASL fingerspelling gestures into readable text in real-time.
+- **Text to Sign**: Converts input text into animated fingerspelling gestures, enhancing communication for non-ASL speakers.
+- **Speech Output**: Generates audible speech from text, providing an additional layer of accessibility.
+
+To know more about these features, watch the [Demo Video](#).
+
+### Troubleshooting:
+If you encounter issues, ensure:
+- Python and required libraries are installed correctly.
+- This Program was built on Python version 11.6
+- Your camera permissions are enabled for gesture detection.
+
+## 📊 **Flow Charts**
+
+Flow charts explaining the system's architecture and process will be added here soon. This will include:
+- Data flow for sign-to-text translation.
+- Process flow for text-to-sign animations.
+- Integration of the speech system.
+
+## 🧑‍💻 **Technical Overview**
+
+This project utilizes a combination of machine learning and computer vision technologies to deliver seamless functionality:
+- **OpenCV**: Used for video and image processing to detect fingerspelling gestures.
+- **MediaPipe**: Powers the hand-tracking and gesture recognition modules.
+- **Flask**: Enables the backend logic and serves the user interface.
+- **Pickle**: Used for saving and loading trained machine learning models.
+
+Other tools and libraries are also integrated to optimize performance and usability.
+
+## 📖 **Glossary**
+
+- **ASL**: American Sign Language, a visual language used primarily by the Deaf community in the United States.
+- **Fingerspelling**: A method of spelling words using hand movements to represent each letter.
+- **Machine Learning**: A subset of artificial intelligence enabling systems to learn and improve from experience.
+- **MediaPipe**: A framework for building machine learning pipelines for live and streaming media.
+- **OpenCV**: Open Source Computer Vision Library for real-time image and video processing.
+
+## 🔮 **Future Plans**
+
+We aim to:
+- Add support for multilingual sign languages.
+- Enhance gesture detection accuracy.
+
+## 📢 **User Feedback**
+
+Your feedback is invaluable! If you encounter issues, have suggestions, or want to share your experience:
+- Open an issue on the GitHub repository.
+- Contact us directly at [jmaan1337@gmail.com] or [aryanvasudev28@gmail.com].
+
+We look forward to hearing from you!
 
 ## 🤝 **Contributing**
 
