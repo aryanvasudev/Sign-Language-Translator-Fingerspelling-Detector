@@ -13,7 +13,7 @@ def generate_sentences(input_text):
     
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
+            model="chatgpt-4o-latest",
             messages=[
                 {
                     "role": "system",
