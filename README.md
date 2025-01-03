@@ -75,31 +75,7 @@ python app.py
 .gitignore
 [augmented-data]
     ├── [0]
-    ├── [1]
-    ├── [10]
-    ├── [11]
-    ├── [12]
-    ├── [13]
-    ├── [14]
-    ├── [15]
-    ├── [16]
-    ├── [17]
-    ├── [18]
-    ├── [19]
-    ├── [2]
-    ├── [20]
-    ├── [21]
-    ├── [22]
-    ├── [23]
-    ├── [24]
-    ├── [25]
-    ├── [3]
-    ├── [4]
-    ├── [5]
-    ├── [6]
-    ├── [7]
-    ├── [8]
-    └── [9]
+    ├── [Add 0 to 26 folders only if you are training again or just leave this as the data has been already trained into the model.]
 CODE_OF_CONDUCT.md
 [datasets]
     ├── dataset.pickle
@@ -130,8 +106,6 @@ CODE_OF_CONDUCT.md
         ├── X.png
         ├── Y.png
         └── Z.png
-[docs]
-    └── .project_structure_filter
 LICENSE
 [logo]
     └── CodeCrushers.png
