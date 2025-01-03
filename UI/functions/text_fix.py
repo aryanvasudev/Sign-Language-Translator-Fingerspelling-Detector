@@ -1,29 +1,24 @@
-import requests
+import openai
 import os
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 
 load_dotenv()
-API_KEY = os.getenv("PERPLEXITY_API_KEY")
-if not API_KEY:
-    raise ValueError("API key not found in .env file. Please add PERPLEXITY_API_KEY to your .env file.")
+API_KEY = os.getenv("OPENAI_API_KEY")
 
-BASE_URL = "https://api.perplexity.ai"
+if not API_KEY:
+    raise ValueError("API key not found in .env file. Please add OPENAI_API_KEY to your .env file.")
 
 def generate_sentences(input_text):
+    openai.api_key = API_KEY
     
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    
-    payload = {
-    "model": "llama-3.1-sonar-small-128k-online",
-    "messages": [
-        {
-            "role": "system",
-            "content": (
-                "CRITICAL RULE: Return ONLY the corrected sentence. No explanations, no input/output labels.\n"
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "CRITICAL RULE: Return ONLY the corrected sentence. No explanations, no input/output labels.\n"
                 "1. Return ONLY the corrected sentence - no explanations, labels, or quotes\n"
                 "2. NEVER change original words or grammar structures\n"
                 "3. NEVER add, remove, or modify words\n"
@@ -364,34 +359,26 @@ def generate_sentences(input_text):
                 "Output: Above Below.\n"
                 "\nInput: S I D E T O S I D E E\n"
                 "Output: Side To Side.\n"
-            )
-        },
-        {
-            "role": "user",
-            "content": input_text
-        }
-    ],
-    "temperature": 0.0,
-    "top_p": 1.0,
-    "max_tokens": len(input_text.split()) + 15,
-    "stop": None,
-    "n": 1,
-    "logit_bias": {}
-}
-
-    try:
-        response = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers)
-        response.raise_for_status()
-        result = response.json()
-        return result.get("choices", [{}])[0].get("message", {}).get("content", "No response generated.")
-    
-    except requests.exceptions.RequestException as e:
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": input_text
+                }
+            ],
+            temperature=0.0,
+            max_tokens=len(input_text.split()) + 15,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0
+        )
+        return response.choices[0].message.content
+    except Exception as e:
         return f"An error occurred: {e}"
 
 # Example usage
 if __name__ == "__main__":
-    input_text = "A L P H O A Z B E T"
+    input_text = "A E L P H E A B E T"
     output = generate_sentences(input_text)
-    
     print("Input Text:", input_text)
     print("Generated Sentences:", output)
