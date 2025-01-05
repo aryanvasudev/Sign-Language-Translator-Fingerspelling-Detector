@@ -123,10 +123,7 @@ function convertSpeech() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Display the converted text
                 document.getElementById('text-input').value = data.text;
-                
-                // Display the sign language images
                 imagesData = data.images;
                 currentImageIndex = 0;
                 clearInterval(imageInterval);
@@ -164,5 +161,5 @@ function displayNextImage() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialization code (if needed)
+// add more event listeners here as needed if you are contributing to this project
 });

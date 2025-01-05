@@ -20,7 +20,7 @@ def process_video_with_output():
     current_char = ""
 
     last_detection_time = time.time()
-    stabilization_delay = 2.0  # Added a delay of 2 seconds to wait for sign completion
+    stabilization_delay = 2.0 # Change this value to adjust stabilization delay
     stable_char = ""
 
     while True:
@@ -78,7 +78,7 @@ def process_video_with_output():
             if current_char_list:
                 current_char = current_char_list[0].split()[0].upper()
 
-                if current_char != stable_char and time.time() - last_detection_time >= stabilization_delay:  # Waiting for sign stabilization
+                if current_char != stable_char and time.time() - last_detection_time >= stabilization_delay:
                     stable_char = current_char
                     detected_sentence.append(current_char)
                     last_confirmed_char = current_char

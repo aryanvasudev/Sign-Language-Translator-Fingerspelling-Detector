@@ -20,6 +20,7 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
 labels_dict = {i: chr(97 + i) for i in range(26)}
 
+
 # Global variables
 detected_sentence = []
 is_recording = False
@@ -32,6 +33,7 @@ stability_buffer = []
 STABILITY_THRESHOLD = 5
 STABILITY_TIME_WINDOW = 1.0
 
+# Function to check sign stability
 def check_sign_stability(prediction):
     global stability_buffer
     current_time = time.time()
@@ -44,6 +46,7 @@ def check_sign_stability(prediction):
             return True, recent_predictions[0]
     return False, None
 
+# Function to generate frames
 def generate_frames():
     global is_recording, detected_sentence, last_confirmed_char, last_detection_time, stable_char
     cap = cv2.VideoCapture(0)
@@ -116,15 +119,18 @@ def generate_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+# Route to the index page
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# Route to the video feed
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(),
                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
+# Route to start and stop recording
 @app.route('/start_recording', methods=['POST'])
 def start_recording():
     global is_recording, detected_sentence, stability_buffer
@@ -145,11 +151,13 @@ def stop_recording():
         'meaningful_sentence': current_meaningful_sentence
     })
 
+# Route to get the current prediction
 @app.route('/get_current_prediction')
 def get_current_prediction():
     global stable_char
     return jsonify({'prediction': stable_char})
 
+# Route to speak the current meaningful sentence
 @app.route('/speak_text', methods=['POST'])
 def speak_text():
     global current_meaningful_sentence
@@ -162,6 +170,7 @@ def speak_text():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
+# Route to convert text to sign language
 @app.route('/convert_text', methods=['POST'])
 def convert_text():
     text = request.json.get('text', '')
@@ -177,7 +186,7 @@ def convert_text():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
     
-
+# Route to convert speech to sign language
 @app.route('/convert_speech_to_sign', methods=['POST'])
 def convert_speech_to_sign():
     try:
@@ -205,5 +214,6 @@ def convert_speech_to_sign():
             'message': str(e)
         })
 
+# Run the app
 if __name__ == '__main__':
     app.run(debug=True)

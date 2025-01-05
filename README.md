@@ -182,6 +182,7 @@ Other tools and libraries are also integrated to optimize performance and usabil
 
 We aim to:
 - Add support for multilingual sign languages.
+- Add support for multilingual spoken languages.
 - Enhance gesture detection accuracy.
 
 ## 📢 **User Feedback**

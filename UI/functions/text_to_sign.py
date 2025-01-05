@@ -3,7 +3,6 @@ from PIL import Image
 import base64
 from io import BytesIO
 
-# Dictionary mapping letters to image file paths
 SIGN_LANGUAGE_IMAGES = {
     'A': 'datasets/letter_images/A.png',
     'B': 'datasets/letter_images/B.png',

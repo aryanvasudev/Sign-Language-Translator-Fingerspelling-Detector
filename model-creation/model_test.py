@@ -3,9 +3,8 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from voice import text_to_speech_and_play
-from text_fix import generate_sentences  # Import generate_sentences from text_fix
+from text_fix import generate_sentences
 
-# Load the model
 model_dict = pickle.load(open('./model/model.p', 'rb'))
 model = model_dict['model']
 
@@ -19,10 +18,8 @@ mp_drawing_styles = mp.solutions.drawing_styles
 
 hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
 
-# Define labels dictionary for mapping predictions to lowercase characters (a-z)
-labels_dict = {i: chr(97 + i) for i in range(26)}  # ASCII mapping for a-z
+labels_dict = {i: chr(97 + i) for i in range(26)}
 
-# Variables to store detected sentence and characters
 detected_sentence = []
 current_char = "" 
 last_confirmed_char = ""
@@ -38,7 +35,6 @@ while True:
 
     H, W, _ = frame.shape
 
-    # Convert frame to RGB for Mediapipe processing
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = hands.process(frame_rgb)
 
@@ -48,7 +44,6 @@ while True:
             x_ = []
             y_ = []
 
-            # Extract normalized coordinates of hand landmarks
             for i in range(len(hand_landmarks.landmark)):
                 x = hand_landmarks.landmark[i].x
                 y = hand_landmarks.landmark[i].y
@@ -64,7 +59,6 @@ while True:
 
             data_aux_list.append(data_aux)
 
-            # Draw hand landmarks on the frame
             mp_drawing.draw_landmarks(
                 frame,
                 hand_landmarks,
@@ -76,35 +70,32 @@ while True:
         current_char_list = [] 
 
         for data_aux in data_aux_list:
-            if len(data_aux) == 42:  # Ensure correct input length for prediction
+            if len(data_aux) == 42: 
                 prediction = model.predict([np.asarray(data_aux)])
                 predicted_character = labels_dict[int(prediction[0])]
 
-                # Check if model supports confidence probabilities
                 if hasattr(model, "predict_proba"):
                     confidence = model.predict_proba([np.asarray(data_aux)])[0][int(prediction[0])]
                 else:
-                    confidence = 1.0  # Assume confidence as 100% if probabilities are not supported
+                    confidence = 1.0 
 
                 current_char_list.append(f"{predicted_character} ({confidence * 100:.2f}%)")
 
-        current_char = " | ".join(current_char_list).upper()  # Capitalize current character(s)
+        current_char = " | ".join(current_char_list).upper()
 
     else:
         current_char = last_confirmed_char.upper() if last_confirmed_char else "NO HAND DETECTED"
 
-    # Display detected sentence on the frame (capitalized)
     sentence_displayed = ' '.join(detected_sentence).upper()
     cv2.putText(frame, sentence_displayed, (50, H - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
 
-    # Display current character on the frame (capitalized)
     cv2.putText(frame, current_char, (50, H - 100), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3, cv2.LINE_AA)
 
     cv2.imshow('Sign Language Detector', frame)
 
     key = cv2.waitKey(1) & 0xFF
     
-    if key == 13:  # Enter key pressed (append character)
+    if key == 13: 
         detected_sentence.append(current_char.split(" ")[0])  
         last_confirmed_char = current_char.split(" ")[0] 
 
