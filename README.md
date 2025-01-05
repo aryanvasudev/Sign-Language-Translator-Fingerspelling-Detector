@@ -157,7 +157,7 @@ If you encounter issues, ensure:
 
 Flow charts explaining the system's architecture and process will be added here soon. This will include:
 
-NOTE - Click [this](https://raw.githubusercontent.com/JashanMaan28/Sign-Language-Translator-Fingerspelling-Detector/main/Assets/Sign_Language_Translate_Flowchart.svg) to view Flowchart in a readable format.
+NOTE - Click [this](https://raw.githubusercontent.com/JashanMaan28/Sign-Language-Translator-Fingerspelling-Detector/main/Assets/Sign_Language_Translator_Flowchart.svg) to view Flowchart in a readable format.
 
 <p align="center">
   <img src="Assets/Sign_Language_Translator_Flowchart.svg" alt="Sign Language Translator Logo"/>
