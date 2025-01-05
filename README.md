@@ -157,6 +157,8 @@ If you encounter issues, ensure:
 
 Flow charts explaining the system's architecture and process will be added here soon. This will include:
 
+NOTE - Open the Flowchart in a New tab to view it correctly.
+
 <p align="center">
   <img src="Assets/Sign_Language_Translate_FlowChart.svg" alt="Sign Language Translator Logo"/>
 </p>
