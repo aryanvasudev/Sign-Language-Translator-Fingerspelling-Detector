@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="logo/CodeCrushers.png" alt="Sign Language Translator Logo" width="200"/>
+  <img src="Assets/CodeCrushers.png" alt="Sign Language Translator Logo" width="200"/>
 </p>
 
 <p align="center">
@@ -156,9 +156,11 @@ If you encounter issues, ensure:
 ## 📊 **Flow Charts**
 
 Flow charts explaining the system's architecture and process will be added here soon. This will include:
-- Data flow for sign-to-text translation.
-- Process flow for text-to-sign animations.
-- Integration of the speech system.
+
+<p align="center">
+  <img src="Assets/Sign_Language_Translate_FlowChart.svg" alt="Sign Language Translator Logo"/>
+</p>
+
 
 ## 🧑‍💻 **Technical Overview**
 
