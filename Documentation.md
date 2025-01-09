@@ -199,6 +199,62 @@ Looking ahead, the Sign Language Translator project plans to introduce several e
 - **Offline Mode**: An offline version of the application will be developed, allowing users to access translations without an internet connection, increasing its accessibility.
 - **Support of Multiple Spoken Languages**: The system will be expanded to include multiple languages other than just English to ensure inclusivity and help a global audience.
 
+## Code Explanations
+
+#### Part – 1: Machine Learning and Model Training
+
+- **collect_images.py**:
+Let me walk you through our data collection process. In collect_images.py, we utilize OpenCV to access the webcam feed. The script creates a sophisticated image collection system that captures 500 images for each of the 26 sign language classes - covering all letters A through Z. When you run the script, it first creates a structured data directory. What's unique about our approach is the real-time frame capture system - it waits for you to position your hand correctly, then automatically captures frames at optimal intervals. We've implemented a visual feedback system that shows you the current capture count and remaining images, making the data collection process user-friendly and efficient.
+- **augment_data.py**:
+To build a robust model, our augment_data.py script applies advanced augmentation techniques to each image, creating five variations through random rotation, shifting, zooming, brightness adjustment, and flipping. This enhances the dataset’s diversity and multiplies our dataset size by 5, improving the model’s performance with different angles and lighting conditions.
+- **create_Dataset.py**:
+The core of our feature extraction lies in create_Dataset.py. We leverage MediaPipe's hand tracking technology to identify 21 crucial hand landmarks - from the wrist to fingertips. Each landmark provides x, y, and z coordinates. To ensure consistency, we normalize these coordinates relative to the wrist position. The script processes these coordinates into a 63-dimensional feature vector for each image. We then package this data into a pickle file, creating a structured dataset that includes both features and their corresponding labels. This preprocessing step is crucial for achieving high accuracy in our final model.
+- **train_classifier.py**:
+Our train_classifier.py script uses a Random Forest Classifier, splitting data 80-20 for training and testing. It includes hyperparameter tuning and cross-validation, resulting in a model with over 98% accuracy, effective for real-world sign language translation.
+NOW MOVING ON TO THE FUNCTIONS.
+
+#### Part – 2: Functions
+- **speech_to_text.py**:
+For voice input processing, we implemented speech_to_text.py using the SpeechRecognition library. The script activates your microphone, adjusts for ambient noise, and converts spoken words into text. It uses Google's speech recognition API for accurate transcription, with built-in error handling for unclear audio or connection issues.
+- **text_fix.py**:
+Our text_fix.py script is crucial for grammar correction. Using OpenAI's API, it processes the raw text input to ensure proper sentence structure. What makes this unique is our custom prompt engineering that maintains the original meaning while fixing spacing and punctuation issues, especially important for sign language translations where words might be spaced irregularly.
+- **video_module.py**:
+The core real-time processing happens in video_module.py. This script captures webcam feed and processes it through our trained model. It implements:
+•	Real-time landmark detection using MediaPipe
+•	Character prediction with confidence scores
+•	A stabilization system with a 2-second delay to prevent flickering
+•	Live visualization of detected signs and the forming sentence
+The system maintains high accuracy while providing immediate visual feedback.
+- **voice.py**:
+Finally, voice.py handles text-to-speech conversion using the ElevenLabs API. It processes our translated text into natural-sounding speech, with customizable voice settings for stability and clarity. The script includes automatic file cleanup after playback, making it memory efficient.
+- **text_to_sign.py**:
+For text-to-sign conversion, text_to_sign.py uses a dictionary mapping each letter to its sign language image. It processes text character by character, converting letters into sign representations. The script includes base64 encoding for efficient image handling and supports spaces between words, ensuring accurate American Sign Language gestures.
+
+#### Part – 3: User Interface
+
+- **app.py**:
+Our Flask application serves as the backend, handling all core functionalities. It manages real-time video processing with OpenCV and MediaPipe, implements our trained model for sign detection, and coordinates all API interactions. Key features include:
+•	Real-time sign language detection with stability checks
+•	Sentence formation with a 2-second stabilization delay
+•	Integration with speech-to-text and text-to-speech services
+•	RESTful API endpoints for all conversion features
+- **index.html**:
+The frontend interface is clean and intuitive, featuring:
+•	Live video feed display
+•	Record and Stop controls
+•	Real-time prediction display
+•	Text output area
+•	Text-to-sign and speech-to-sign conversion options
+The layout prioritizes user experience with clear visual feedback.
+- **main.js**:
+The JavaScript handles all client-side interactions:
+•	Camera stream management
+•	Real-time API communication
+•	Sign language display timing
+•	Speech recording controls
+It includes error handling and smooth transitions between different conversion modes.
+
+
 ## 7. Conclusion
 
 The Sign Language Translator is a pioneering project that significantly contributes to breaking down communication barriers between sign language users and non-users. By transforming ASL gestures into text and speech, it promotes inclusivity and facilitates better interaction in diverse settings. This documentation provides a thorough guide for both users and developers, detailing every aspect of the project's installation, usage, and technical framework, along with plans for future developments.
