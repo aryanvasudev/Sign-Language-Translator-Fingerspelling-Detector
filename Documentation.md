@@ -15,7 +15,7 @@
 
 The Sign Language Translator project is a groundbreaking initiative designed to facilitate communication between individuals who use American Sign Language (ASL) and those who do not. By translating ASL into text and speech, this project aims to make interactions more accessible and inclusive for everyone. The real-time detection system captures ASL gestures through the webcam using MediaPipe's hand tracking, which identifies key points on the hands. These landmarks are then processed by a `RandomForestClassifier` model that has been trained on a dataset of ASL gestures. The machine learning model predicts the corresponding text output, which is refined through the OpenAI API for accuracy. Finally, the translated text can be converted into speech using the ElevenLabs API, providing both visual and auditory outputs for comprehensive communication. The translator utilizes sophisticated machine learning models and APIs to provide accurate, real-time translations, thus fostering better understanding and interaction across different communities.
 
-## 🌟 **Features**
+### 🌟 **Features**
 
 - 💻 **User-Friendly Interface**: Designed for ease of use on both desktop and mobile platforms, making it accessible to a wide range of users.
 - 📄 **API Integration**: Leverages state-of-the-art APIs to enhance the accuracy and efficiency of translations.
@@ -23,6 +23,17 @@ The Sign Language Translator project is a groundbreaking initiative designed to 
 - 🔠 **Text-to-Sign Conversion**: Converts input text into fingerspelling animations, bridging communication gaps for non-ASL speakers.
 - 🔊 **Integrated Speech System**: Converts text to speech, making the communication output audible.
 - 📂 **Lightweight and User-Friendly**: Optimized for accessibility and ease of use.
+
+### 📊 **Flow Chart**
+
+Flow charts explaining the system's architecture and process will be added here soon. This will include:
+
+NOTE - Click [this](https://raw.githubusercontent.com/JashanMaan28/Sign-Language-Translator-Fingerspelling-Detector/main/Assets/Sign_Language_Translator_Flowchart.svg) to view Flowchart in a readable format.
+
+<p align="center">
+  <img src="Assets/Sign_Language_Translator_Flowchart.svg" alt="Sign Language Translator Logo"/>
+</p>
+
 
 ## 2. User Guide
 

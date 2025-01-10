@@ -153,7 +153,7 @@ If you encounter issues, ensure:
 - This Program was built on Python version 11.6
 - Your camera permissions are enabled for gesture detection.
 
-## 📊 **Flow Charts**
+## 📊 **Flow Chart**
 
 Flow charts explaining the system's architecture and process will be added here soon. This will include:
 
