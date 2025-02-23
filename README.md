@@ -36,7 +36,7 @@
 
 ## 🎥 **Demo**
 
-A live demo showcasing the project's features will be available soon. Stay tuned! The link to the YouTube video will be added here: [Demo Link](#)
+A live demo showcasing the project's features will be available soon. Stay tuned! The link to the YouTube video will be added here: [Demo Link](https://drive.google.com/file/d/11Sw8qcE_Gxd7qBhRRCZvTCEPBEDCEzES/view)
 
 ## 🚀 **Installation**
 
