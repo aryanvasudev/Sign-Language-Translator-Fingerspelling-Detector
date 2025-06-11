@@ -43,7 +43,7 @@ A live demo showcasing the project's features will be available soon. Stay tuned
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/InnovatorHub/Sign-Language-Translator-Fingerspelling-Detector.git
+   git clone https://github.com/aryanvasudev/Sign-Language-Translator-Fingerspelling-Detector.git
    ```
 
 2. Navigate to the project directory:  
@@ -157,7 +157,7 @@ If you encounter issues, ensure:
 
 Flow charts explaining the system's architecture and process will be added here soon. This will include:
 
-NOTE - Click [this](https://raw.githubusercontent.com/InnovatorHub/Sign-Language-Translator-Fingerspelling-Detector/main/Assets/Sign_Language_Translator_Flowchart.svg) to view Flowchart in a readable format.
+NOTE - Click [this](https://raw.githubusercontent.com/aryanvasudev/Sign-Language-Translator-Fingerspelling-Detector/main/Assets/Sign_Language_Translator_Flowchart.svg) to view Flowchart in a readable format.
 
 <p align="center">
   <img src="Assets/Sign_Language_Translator_Flowchart.svg" alt="Sign Language Translator Logo, if not visible view it in Assets/Sign_Language_Translator_Flowchart.svg"/>
