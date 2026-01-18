@@ -1,0 +1,64 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Build
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Documentation
+*.md
+!README.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Data (if you want to use pre-built dataset, remove this)
+augmented-data/
+data/
+
+# Temporary files
+*.tmp
+*.temp
+output.mp3
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker/
+
+# Development files
+improvements.md
+CLAUDE.md
+tests/
+requirements-dev.txt

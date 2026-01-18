@@ -1,0 +1,50 @@
+# Sign Language Translator - Docker Compose Configuration
+# Usage:
+#   Development: docker-compose up
+#   Production:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      # API Keys - Set these in your .env file or environment
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - ELEVENLABS_VOICE_ID=${ELEVENLABS_VOICE_ID}
+      # Configurable settings
+      - STABILITY_THRESHOLD=${STABILITY_THRESHOLD:-5}
+      - STABILITY_TIME_WINDOW=${STABILITY_TIME_WINDOW:-1.0}
+      - STABILIZATION_DELAY=${STABILIZATION_DELAY:-2.0}
+      - MIN_DETECTION_CONFIDENCE=${MIN_DETECTION_CONFIDENCE:-0.3}
+    volumes:
+      # Mount source code for development (hot reload)
+      - ./UI:/app/UI
+      - ./model:/app/model:ro
+      - ./datasets:/app/datasets:ro
+      # Don't mount these to use container's installed packages
+      - /app/UI/__pycache__
+    devices:
+      # Enable camera access (Linux)
+      - /dev/video0:/dev/video0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# Note: For camera access on Windows/Mac, you may need to:
+# 1. Use a different approach (not direct device mapping)
+# 2. Or run the application natively instead of in Docker
+#
+# For production without camera (API-only mode):
+# Remove the devices section and the camera will not be available

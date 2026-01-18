@@ -1,0 +1,22 @@
+# Sign Language Translator - Development Dependencies
+# Install with: pip install -r requirements-dev.txt
+
+# Include production dependencies
+-r requirements.txt
+
+# Testing
+pytest==8.0.0
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+
+# Code Quality
+flake8==7.0.0
+black==24.1.0
+isort==5.13.0
+mypy==1.8.0
+
+# Type Stubs
+types-requests==2.31.0.0
+
+# Development Server
+watchdog==4.0.0

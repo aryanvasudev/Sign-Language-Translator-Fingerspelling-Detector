@@ -1,365 +1,433 @@
-import openai
+"""
+Text Fix Module
+
+This module uses OpenAI's API to correct and format text generated
+from ASL fingerspelling recognition. It handles spacing issues,
+typos, and converts spaced letters into proper words.
+"""
+
 import os
+import logging
+from typing import Optional
 from dotenv import load_dotenv
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Load environment variables
 load_dotenv()
 API_KEY = os.getenv("OPENAI_API_KEY")
 
-if not API_KEY:
-    raise ValueError("API key not found in .env file. Please add OPENAI_API_KEY to your .env file.")
+# Track if API is available
+API_AVAILABLE = False
+client = None
 
-def generate_sentences(input_text):
-    openai.api_key = API_KEY
-    
+if not API_KEY or API_KEY == "your_openai_api_key_here":
+    logger.warning("OPENAI_API_KEY not configured. Text correction will be disabled.")
+    logger.warning("To enable, add a valid OPENAI_API_KEY to your .env file.")
+else:
+    # Initialize OpenAI client with new API
     try:
-        response = openai.ChatCompletion.create(
-            model="chatgpt-4o-latest",
+        from openai import OpenAI
+        client = OpenAI(api_key=API_KEY)
+        API_AVAILABLE = True
+        logger.info("OpenAI client initialized successfully")
+    except ImportError:
+        logger.error("openai package not installed. Install with: pip install openai")
+    except Exception as e:
+        logger.error(f"Failed to initialize OpenAI client: {e}")
+
+# System prompt for text correction
+SYSTEM_PROMPT = """CRITICAL RULE: Return ONLY the corrected sentence. No explanations, no input/output labels.
+1. Return ONLY the corrected sentence - no explanations, labels, or quotes
+2. NEVER change original words or grammar structures
+3. NEVER add, remove, or modify words
+4. ONLY fix spelling errors and join spaced letters
+5. Add punctuation ONLY when clearly needed
+6. Maintain ALL original word forms exactly as given
+7. Keep exact same sentence structure
+8. Preserve word order exactly as input
+9. Keep formal/informal tone as provided
+10. No semantic or meaning changes
+11. Keep known acronyms exactly as they are (BMW stays BMW)
+12. Add period after single words and acronyms
+13. NEVER convert acronyms to words
+14. Fix common typing errors and misspellings
+15. Add appropriate punctuation
+16. Convert repeated letters only if they're typos (like 'helllo' to 'hello')
+19. Maintain proper sentence case
+20. Handle contractions properly (dont -> don't, cant -> can't)
+
+Examples:
+Input: D O N O T C R Y N O W
+Output: Do Not Cry Now.
+
+Input: I A M G O I N G H O M E
+Output: I Am Going Home.
+
+Input: W H E R E A R E Y O U G O I N G
+Output: Where Are You Going?
+
+Input: H E L L O W O R L D
+Output: Hello World.
+
+Input: T H I S I S A T E S T
+Output: This Is A Test.
+
+Input: G O O D M O R N I N G
+Output: Good Morning.
+
+Input: S E E Y O U T O M O R R O W
+Output: See You Tomorrow.
+
+Input: H A V E A N I C E D A Y
+Output: Have A Nice Day.
+
+Input: T H A N K Y O U V E R Y M U C H
+Output: Thank You Very Much.
+
+Input: P L E A S E H E L P M E
+Output: Please Help Me.
+
+Input: I L O V E P R O G R A M M I N G
+Output: I Love Programming.
+
+Input: W E A R E W O R K I N G
+Output: We Are Working.
+
+Input: S H E I S D A N C I N G
+Output: She Is Dancing.
+
+Input: T H E Y A R E P L A Y I N G
+Output: They Are Playing.
+
+Input: H E W A S H E R E
+Output: He Was Here.
+
+Input: W E W E R E T H E R E
+Output: We Were There.
+
+Input: I T I S R A I N I N G
+Output: It Is Raining.
+
+Input: T H E S U N I S S H I N I N G
+Output: The Sun Is Shining.
+
+Input: B I R D S A R E F L Y I N G
+Output: Birds Are Flying.
+
+Input: W H A T I S Y O U R N A M E
+Output: What Is Your Name?
+
+Input: H O W A R E Y O U
+Output: How Are You?
+
+Input: N I C E T O M E E T Y O U
+Output: Nice To Meet You.
+
+Input: S E E Y O U L A T E R
+Output: See You Later.
+
+Input: H A V E F U N
+Output: Have Fun.
+
+Input: T A K E C A R E
+Output: Take Care.
+
+Input: B E S A F E
+Output: Be Safe.
+
+Input: G O O D L U C K
+Output: Good Luck.
+
+Input: W E L C O M E B A C K
+Output: Welcome Back.
+
+Input: S T A Y H O M E
+Output: Stay Home.
+
+Input: B E H A P P Y
+Output: Be Happy.
+
+Examples:
+Input: M A C H I N E L E A U N I N G
+Output: Machine Learning.
+
+Input: C A N Y O U F Y I X T H O E O L D U V A N
+Output: Can you fix the old van?
+
+Input: A R T I F I C A L I N T E L I G E N S
+Output: Artificial Intelligence.
+
+Input: W H E R E I S S T H E N E W C A R R
+Output: Where is the new car?
+
+Input: S O F T W E R E N G I N E R
+Output: Software Engineer.
+
+Input: H E L P M E E W I T H T H I S S C O D E
+Output: Help me with this code.
+
+Input: D A T A S C I E N S E
+Output: Data Science.
+
+Input: T H E Y Y A R E W O R K I N G G H A R D
+Output: They are working hard.
+
+Input: C L O U D C O M P U T I G
+Output: Cloud Computing.
+
+Input: W H A T T I S S Y O U R N A M E E
+Output: What is your name?
+
+Input: F U L L S T A K D E V E L O P E R
+Output: Full Stack Developer.
+
+Input: P L E A S E E O P E N T H E D O O R R
+Output: Please open the door.
+
+Input: W E B D E V E L O P M E N T T
+Output: Web Development.
+
+Input: I L O V E E P R O G R A M M I N G G
+Output: I love programming.
+
+Input: D A T A B A S E Q U E R Y Y
+Output: Database Query.
+
+Input: D O Y O U U L I K E C O F F E E E
+Output: Do you like coffee?
+
+Input: S Y S T E M D E S I G N N
+Output: System Design.
+
+Input: L E T S S G O T O T H E P A R K K
+Output: Lets go to the park.
+
+Single Word Examples:
+Input: D O N E
+Output: Done.
+
+Input: H E L L O
+Output: Hello.
+
+Input: W O R K
+Output: Work.
+
+Input: S L E E P
+Output: Sleep.
+
+Input: C O D E
+Output: Code.
+
+Acronym Examples:
+Input: B M W
+Output: BMW.
+
+Input: I B M
+Output: IBM.
+
+Input: N A S A
+Output: NASA.
+
+Input: F B I
+Output: FBI.
+
+Input: C I A
+Output: CIA.
+
+Input: N B A
+Output: NBA.
+
+Input: U S A
+Output: USA.
+
+Input: U K
+Output: UK.
+
+Input: U N
+Output: UN.
+
+Input: M I T
+Output: MIT.
+
+Input: N F L
+Output: NFL.
+
+Input: W H O
+Output: WHO.
+
+Input: N O S
+Output: NOS.
+
+Input: R A M
+Output: RAM.
+
+Input: C P U
+Output: CPU.
+
+Input: G P U
+Output: GPU.
+
+Mixed Examples:
+Input: I W O R K A T I B M
+Output: I Work At IBM.
+
+Input: M Y B M W I S N E W
+Output: My BMW Is New.
+
+Input: T H E C I A A N D F B I
+Output: The CIA And FBI.
+
+Input: N A S A A N D I S R O
+Output: NASA And ISRO.
+
+Typing Error Examples:
+Input: HELLOZ
+Output: Hello.
+
+Input: GOODZ
+Output: Good.
+
+Input: THANKZ
+Output: Thanks.
+
+Input: NICEE
+Output: Nice.
+
+Input: GREATT
+Output: Great.
+
+Misspelling Examples:
+Input: Quewn
+Output: Queen.
+
+Input: Programing
+Output: Programming.
+
+Input: Enginear
+Output: Engineer.
+
+Input: Computar
+Output: Computer.
+
+Input: Softwar
+Output: Software.
+
+Mixed Error Examples:
+Input: TESZT
+Output: Test.
+
+Input: CODINGG
+Output: Coding.
+
+Input: SLEAPING
+Output: Sleeping.
+
+Input: STUDYYING
+Output: Studying.
+
+Input: WORKKING
+Output: Working.
+
+Sign Language Specific Examples:
+Input: S I N G G A G E
+Output: Sign Language.
+
+Input: D E F A
+Output: Deaf.
+
+Input: H N A D
+Output: Hand.
+
+Input: F I N G R E
+Output: Finger.
+
+Input: G E S T R U E
+Output: Gesture.
+
+Input: S P E L L I G N
+Output: Spelling.
+
+Input: C O M M U N I C T E
+Output: Communicate.
+
+Input: E X P R E S S N I O
+Output: Expression.
+
+Input: V I S U L A
+Output: Visual.
+
+Input: M O V E M N E T
+Output: Movement.
+
+Input: F E E L I G N
+Output: Feeling.
+
+Input: M O R N I M G
+Output: Morning.
+
+Input: T H A M K
+Output: Thank.
+
+Input: W A T E R N
+Output: Water.
+
+Input: P L E A S N E
+Output: Please.
+
+Input: H E L L M O
+Output: Hello.
+
+Input: G O O D M B Y E
+Output: Goodbye.
+
+Input: S I G M N
+Output: Sign.
+
+Input: F R I E M N D
+Output: Friend.
+
+Input: T E A C H M E R
+Output: Teacher.
+"""
+
+
+def generate_sentences(input_text: str) -> str:
+    """Generate corrected sentences from spaced letter input.
+
+    Args:
+        input_text: Raw text with spaced letters from ASL recognition.
+
+    Returns:
+        Corrected and formatted sentence.
+
+    Raises:
+        Exception: If OpenAI API call fails.
+    """
+    if not input_text or not input_text.strip():
+        return ""
+
+    # If API is not available, return the raw text with basic formatting
+    if not API_AVAILABLE or client is None:
+        logger.warning("OpenAI API not available, returning raw text")
+        # Basic formatting: capitalize and add period
+        formatted = input_text.strip()
+        if formatted:
+            formatted = formatted[0].upper() + formatted[1:] if len(formatted) > 1 else formatted.upper()
+            if not formatted.endswith(('.', '!', '?')):
+                formatted += '.'
+        return formatted
+
+    try:
+        logger.info(f"Processing text: {input_text[:50]}...")
+
+        response = client.chat.completions.create(
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "CRITICAL RULE: Return ONLY the corrected sentence. No explanations, no input/output labels.\n"
-                "1. Return ONLY the corrected sentence - no explanations, labels, or quotes\n"
-                "2. NEVER change original words or grammar structures\n"
-                "3. NEVER add, remove, or modify words\n"
-                "4. ONLY fix spelling errors and join spaced letters\n"
-                "5. Add punctuation ONLY when clearly needed\n"
-                "6. Maintain ALL original word forms exactly as given\n"
-                "7. Keep exact same sentence structure\n"
-                "8. Preserve word order exactly as input\n"
-                "9. Keep formal/informal tone as provided\n"
-                "10. No semantic or meaning changes\n"
-                "11. Keep known acronyms exactly as they are (BMW stays BMW)\n"
-                "12. Add period after single words and acronyms\n"
-                "13. NEVER convert acronyms to words\n"
-                "14. Fix common typing errors and misspellings\n"
-                "15. Add appropriate punctuation\n"
-                "16. Convert repeated letters only if they're typos (like 'helllo' to 'hello')"
-                "19. Maintain proper sentence case"
-                "20. Handle contractions properly (dont -> don't, cant -> can't)"
-                "\nExamples:\n"
-                "Input: D O N O T C R Y N O W\n"
-                "Output: Do Not Cry Now.\n"
-                "\nInput: I A M G O I N G H O M E\n"
-                "Output: I Am Going Home.\n"
-                "\nInput: W H E R E A R E Y O U G O I N G\n"
-                "Output: Where Are You Going?\n"
-                "\nInput: H E L L O W O R L D\n"
-                "Output: Hello World.\n"
-                "\nInput: T H I S I S A T E S T\n"
-                "Output: This Is A Test.\n"
-                "\nInput: G O O D M O R N I N G\n"
-                "Output: Good Morning.\n"
-                "\nInput: S E E Y O U T O M O R R O W\n"
-                "Output: See You Tomorrow.\n"
-                "\nInput: H A V E A N I C E D A Y\n"
-                "Output: Have A Nice Day.\n"
-                "\nInput: T H A N K Y O U V E R Y M U C H\n"
-                "Output: Thank You Very Much.\n"
-                "\nInput: P L E A S E H E L P M E\n"
-                "Output: Please Help Me.\n"
-                "\nInput: I L O V E P R O G R A M M I N G\n"
-                "Output: I Love Programming.\n"
-                "\nInput: W E A R E W O R K I N G\n"
-                "Output: We Are Working.\n"
-                "\nInput: S H E I S D A N C I N G\n"
-                "Output: She Is Dancing.\n"
-                "\nInput: T H E Y A R E P L A Y I N G\n"
-                "Output: They Are Playing.\n"
-                "\nInput: H E W A S H E R E\n"
-                "Output: He Was Here.\n"
-                "\nInput: W E W E R E T H E R E\n"
-                "Output: We Were There.\n"
-                "\nInput: I T I S R A I N I N G\n"
-                "Output: It Is Raining.\n"
-                "\nInput: T H E S U N I S S H I N I N G\n"
-                "Output: The Sun Is Shining.\n"
-                "\nInput: B I R D S A R E F L Y I N G\n"
-                "Output: Birds Are Flying.\n"
-                "\nInput: W H A T I S Y O U R N A M E\n"
-                "Output: What Is Your Name?\n"
-                "\nInput: H O W A R E Y O U\n"
-                "Output: How Are You?\n"
-                "\nInput: N I C E T O M E E T Y O U\n"
-                "Output: Nice To Meet You.\n"
-                "\nInput: S E E Y O U L A T E R\n"
-                "Output: See You Later.\n"
-                "\nInput: H A V E F U N\n"
-                "Output: Have Fun.\n"
-                "\nInput: T A K E C A R E\n"
-                "Output: Take Care.\n"
-                "\nInput: B E S A F E\n"
-                "Output: Be Safe.\n"
-                "\nInput: G O O D L U C K\n"
-                "Output: Good Luck.\n"
-                "\nInput: W E L C O M E B A C K\n"
-                "Output: Welcome Back.\n"
-                "\nInput: S T A Y H O M E\n"
-                "Output: Stay Home.\n"
-                "\nInput: B E H A P P Y\n"
-                "Output: Be Happy.\n"
-                "\nExamples:\n"
-                "Input: M A C H I N E L E A U N I N G\n"
-                "Output: Machine Learning.\n"
-                "\nInput: C A N Y O U F Y I X T H O E O L D U V A N\n"
-                "Output: Can you fix the old van?\n"
-                "\nInput: A R T I F I C A L I N T E L I G E N S\n"
-                "Output: Artificial Intelligence.\n"
-                "\nInput: W H E R E I S S T H E N E W C A R R\n"
-                "Output: Where is the new car?\n"
-                "\nInput: S O F T W E R E N G I N E R\n"
-                "Output: Software Engineer.\n"
-                "\nInput: H E L P M E E W I T H T H I S S C O D E\n"
-                "Output: Help me with this code.\n"
-                "\nInput: D A T A S C I E N S E\n"
-                "Output: Data Science.\n"
-                "\nInput: T H E Y Y A R E W O R K I N G G H A R D\n"
-                "Output: They are working hard.\n"
-                "\nInput: C L O U D C O M P U T I G\n"
-                "Output: Cloud Computing.\n"
-                "\nInput: W H A T T I S S Y O U R N A M E E\n"
-                "Output: What is your name?\n"
-                "\nInput: F U L L S T A K D E V E L O P E R\n"
-                "Output: Full Stack Developer.\n"
-                "\nInput: P L E A S E E O P E N T H E D O O R R\n"
-                "Output: Please open the door.\n"
-                "\nInput: W E B D E V E L O P M E N T T\n"
-                "Output: Web Development.\n"
-                "\nInput: I L O V E E P R O G R A M M I N G G\n"
-                "Output: I love programming.\n"
-                "\nInput: D A T A B A S E Q U E R Y Y\n"
-                "Output: Database Query.\n"
-                "\nInput: D O Y O U U L I K E C O F F E E E\n"
-                "Output: Do you like coffee?\n"
-                "\nInput: S Y S T E M D E S I G N N\n"
-                "Output: System Design.\n"
-                "\nInput: L E T S S G O T O T H E P A R K K\n"
-                "Output: Lets go to the park."
-                "\nSingle Word Examples:\n"
-                "Input: D O N E\n"
-                "Output: Done.\n"
-                "\nInput: H E L L O\n"
-                "Output: Hello.\n"
-                "\nInput: W O R K\n"
-                "Output: Work.\n"
-                "\nInput: S L E E P\n"
-                "Output: Sleep.\n"
-                "\nInput: C O D E\n"
-                "Output: Code.\n"
-                "\nAcronym Examples:\n"
-                "Input: B M W\n"
-                "Output: BMW.\n"
-                "\nInput: I B M\n"
-                "Output: IBM.\n"
-                "\nInput: N A S A\n"
-                "Output: NASA.\n"
-                "\nInput: F B I\n"
-                "Output: FBI.\n"
-                "\nInput: C I A\n"
-                "Output: CIA.\n"
-                "\nInput: N B A\n"
-                "Output: NBA.\n"
-                "\nInput: U S A\n"
-                "Output: USA.\n"
-                "\nInput: U K\n"
-                "Output: UK.\n"
-                "\nInput: U N\n"
-                "Output: UN.\n"
-                "\nInput: M I T\n"
-                "Output: MIT.\n"
-                "\nInput: N F L\n"
-                "Output: NFL.\n"
-                "\nInput: W H O\n"
-                "Output: WHO.\n"
-                "\nInput: N O S\n"
-                "Output: NOS.\n"
-                "\nInput: R A M\n"
-                "Output: RAM.\n"
-                "\nInput: C P U\n"
-                "Output: CPU.\n"
-                "\nInput: G P U\n"
-                "Output: GPU.\n"
-                "\nMixed Examples:\n"
-                "Input: I W O R K A T I B M\n"
-                "Output: I Work At IBM.\n"
-                "\nInput: M Y B M W I S N E W\n"
-                "Output: My BMW Is New.\n"
-                "\nInput: T H E C I A A N D F B I\n"
-                "Output: The CIA And FBI.\n"
-                "\nInput: N A S A A N D I S R O\n"
-                "Output: NASA And ISRO.\n"
-                "\nTyping Error Examples:\n"
-                "Input: HELLOZ\n"
-                "Output: Hello.\n"
-                "\nInput: GOODZ\n"
-                "Output: Good.\n"
-                "\nInput: THANKZ\n"
-                "Output: Thanks.\n"
-                "\nInput: NICEE\n"
-                "Output: Nice.\n"
-                "\nInput: GREATT\n"
-                "Output: Great.\n"
-                "\nMisspelling Examples:\n"
-                "Input: Quewn\n"
-                "Output: Queen.\n"
-                "\nInput: Programing\n"
-                "Output: Programming.\n"
-                "\nInput: Enginear\n"
-                "Output: Engineer.\n"
-                "\nInput: Computar\n"
-                "Output: Computer.\n"
-                "\nInput: Softwar\n"
-                "Output: Software.\n"
-                "\nMixed Error Examples:\n"
-                "Input: TESZT\n"
-                "Output: Test.\n"
-                "\nInput: CODINGG\n"
-                "Output: Coding.\n"
-                "\nInput: SLEAPING\n"
-                "Output: Sleeping.\n"
-                "\nInput: STUDYYING\n"
-                "Output: Studying.\n"
-                "\nInput: WORKKING\n"
-                "Output: Working.\n"
-                "\nCommon Letter Substitutions:\n"
-                "Input: KODING\n"
-                "Output: Coding.\n"
-                "\nInput: PHISHING\n"
-                "Output: Fishing.\n"
-                "\nInput: SKOOL\n"
-                "Output: School.\n"
-                "\nInput: LITE\n"
-                "Output: Light.\n"
-                "\nInput: NITE\n"
-                "Output: Night.\n"
-                "\nExtra Letter Examples:\n"
-                "Input: RUNNINGG\n"
-                "Output: Running.\n"
-                "\nInput: SWIMMMING\n"
-                "Output: Swimming.\n"
-                "\nInput: DANCCING\n"
-                "Output: Dancing.\n"
-                "\nInput: PLAYYING\n"
-                "Output: Playing.\n"
-                "\nMissing Letter Examples:\n"
-                "Input: PROGAM\n"
-                "Output: Program.\n"
-                "\nInput: DEVLOPER\n"
-                "Output: Developer.\n"
-                "\nInput: ENGINER\n"
-                "Output: Engineer.\n"
-                "\nMixed Errors in Sentences:\n"
-                "Input: I A M A PROGRAMMMER\n"
-                "Output: I Am A Programmer.\n"
-                "\nInput: S H E I S DANSING\n"
-                "Output: She Is Dancing.\n"
-                "\nInput: T H E Y R PLAYYING\n"
-                "Output: They Are Playing.\n"
-                "\nMissing Letter Examples:\n"
-                "Input: S I N G G A G E\n"
-                "Output: Sign Language.\n"
-                "\nInput: D E F A\n"
-                "Output: Deaf.\n"
-                "\nInput: H N A D\n"
-                "Output: Hand.\n"
-                "\nInput: F I N G R E\n"
-                "Output: Finger.\n"
-                "\nInput: G E S T R U E\n"
-                "Output: Gesture.\n"
-                "\nInput: S P E L L I G N\n"
-                "Output: Spelling.\n"
-                "\nInput: C O M M U N I C T E\n"
-                "Output: Communicate.\n"
-                "\nInput: E X P R E S S N I O\n"
-                "Output: Expression.\n"
-                "\nInput: V I S U L A\n"
-                "Output: Visual.\n"
-                "\nInput: M O V E M N E T\n"
-                "Output: Movement.\n"
-                "\nCommonly Confused Letters:\n"
-                "Input: B D (commonly confused in signing)\n"
-                "Output: B.\n"
-                "\nInput: M W\n"
-                "Output: M.\n"
-                "\nInput: N Z\n"
-                "Output: N.\n"
-                "\nInput: P Q\n"
-                "Output: P.\n"
-                "\nInput: D B\n"
-                "Output: D.\n"
-                "\nInput: S Z\n"
-                "Output: S.\n"
-                "\nInput: E Three\n"
-                "Output: E.\n"
-                "\nInput: C O\n"
-                "Output: C.\n"
-                "\nInput: V U\n"
-                "Output: V.\n"
-                "\nInput: G C\n"
-                "Output: G.\n"
-                "\nMore Examples:\n"
-                "Input: F E E L I G N\n"
-                "Output: Feeling.\n"
-                "\nInput: M O R N I M G\n"
-                "Output: Morning.\n"
-                "\nInput: T H A M K\n"
-                "Output: Thank.\n"
-                "\nInput: W A T E R N\n"
-                "Output: Water.\n"
-                "\nInput: P L E A S N E\n"
-                "Output: Please.\n"
-                "\nInput: H E L L M O\n"
-                "Output: Hello.\n"
-                "\nInput: G O O D M B Y E\n"
-                "Output: Goodbye.\n"
-                "\nInput: S I G M N\n"
-                "Output: Sign.\n"
-                "\nInput: F R I E M N D\n"
-                "Output: Friend.\n"
-                "\nInput: T E A C H M E R\n"
-                "Output: Teacher.\n"
-                "\nInput: L O V E L\n"
-                "Output: Love.\n"
-                "\nInput: H A P P Y P\n"
-                "Output: Happy.\n"
-                "\nInput: S O R R Y R\n"
-                "Output: Sorry.\n"
-                "\nInput: T H A N K S K\n"
-                "Output: Thanks.\n"
-                "\nInput: H E L P H\n"
-                "Output: Help.\n"
-                "\nInput: W A N T W\n"
-                "Output: Want.\n"
-                "\nInput: N E E D N\n"
-                "Output: Need.\n"
-                "\nInput: G I V E G\n"
-                "Output: Give.\n"
-                "\nInput: S E E S\n"
-                "Output: See.\n"
-                "\nInput: M E E T M\n"
-                "Output: Meet.\n"
-                "\nDirectional Examples:\n"
-                "Input: U P D O W N W\n"
-                "Output: Up Down.\n"
-                "\nInput: L E F T R I G H L\n"
-                "Output: Left Right.\n"
-                "\nInput: F R O N T B A C K F\n"
-                "Output: Front Back.\n"
-                "\nInput: H I G H L O W H\n"
-                "Output: High Low.\n"
-                "\nInput: I N O U T T\n"
-                "Output: In Out.\n"
-                "\nInput: T O P B O T T O M P\n"
-                "Output: Top Bottom.\n"
-                "\nInput: N E A R F A R R\n"
-                "Output: Near Far.\n"
-                "\nInput: B E F O R E A F T E R E\n"
-                "Output: Before After.\n"
-                "\nInput: A B O V E B E L O W W\n"
-                "Output: Above Below.\n"
-                "\nInput: S I D E T O S I D E E\n"
-                "Output: Side To Side.\n"
-                    )
+                    "content": SYSTEM_PROMPT
                 },
                 {
                     "role": "user",
@@ -367,18 +435,46 @@ def generate_sentences(input_text):
                 }
             ],
             temperature=0.0,
-            max_tokens=len(input_text.split()) + 15,
+            max_tokens=len(input_text.split()) + 50,
             top_p=1.0,
             frequency_penalty=0.0,
             presence_penalty=0.0
         )
-        return response.choices[0].message.content
+
+        result = response.choices[0].message.content
+        logger.info(f"Generated result: {result}")
+        return result.strip() if result else input_text
+
     except Exception as e:
-        return f"An error occurred: {e}"
+        error_msg = str(e)
+        logger.error(f"OpenAI API error: {error_msg}")
+
+        # Handle specific error types with user-friendly messages
+        if "401" in error_msg or "invalid_api_key" in error_msg.lower():
+            logger.error("Invalid OpenAI API key. Please check your .env file.")
+            # Return raw text instead of error
+            return input_text.strip()
+        elif "429" in error_msg or "rate_limit" in error_msg.lower():
+            logger.error("OpenAI rate limit exceeded. Please try again later.")
+            return input_text.strip()
+        elif "insufficient_quota" in error_msg.lower():
+            logger.error("OpenAI quota exceeded. Please check your billing.")
+            return input_text.strip()
+
+        # For other errors, return raw text
+        return input_text.strip()
+
 
 # Example usage
 if __name__ == "__main__":
-    input_text = "A E L P H E A B E T"
-    output = generate_sentences(input_text)
-    print("Input Text:", input_text)
-    print("Generated Sentences:", output)
+    test_inputs = [
+        "A E L P H E A B E T",
+        "H E L L O W O R L D",
+        "I L O V E P R O G R A M M I N G"
+    ]
+
+    for input_text in test_inputs:
+        output = generate_sentences(input_text)
+        print(f"Input: {input_text}")
+        print(f"Output: {output}")
+        print("-" * 40)

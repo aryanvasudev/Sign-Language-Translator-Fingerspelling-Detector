@@ -1,8 +1,67 @@
+# Environment and secrets
 .env
+*.env.local
+
+# Python
 *.pyc
 *.pyo
 *.pyd
-*.log
 __pycache__/
-.wav
-/venv/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.venv/
+
+# Logs
+*.log
+app.log
+logs/
+
+# Audio files
+*.wav
+*.mp3
+output.mp3
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+coverage.xml
+*.cover
+
+# Build
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+
+# Data directories (large files)
+augmented-data/
+data/
+
+# Model cache
+*.p.bak
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/

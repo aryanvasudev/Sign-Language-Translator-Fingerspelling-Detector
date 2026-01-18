@@ -1,13 +1,30 @@
+# Sign Language Translator - Production Dependencies
+# Python 3.9+ required, Python 3.11 recommended
+
+# Web Framework
 Flask==3.1.0
+flask-limiter==3.5.1
+
+# Computer Vision & ML
+opencv-contrib-python==4.10.0.84
 mediapipe==0.10.20
+scikit-learn==1.6.0
 numpy==2.2.1
-opencv_contrib_python==4.10.0.84
-opencv_python==4.10.0.84
-Pillow==11.1.0
-playsound==1.2.2
-python-dotenv==1.0.1
-Requests==2.32.3
-scikit_learn==1.6.0
 tensorflow==2.18.0
-tensorflow_intel==2.18.0
+
+# Image Processing
+Pillow==11.1.0
+
+# Speech & Audio
+playsound==1.2.2
+SpeechRecognition==3.10.0
+
+# API Clients
+openai>=1.0.0
+requests==2.32.3
+
+# Environment & Config
+python-dotenv==1.0.1
+
+# Progress Bar (for training)
 tqdm==4.67.1

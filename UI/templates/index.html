@@ -4,73 +4,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Language Translator</title>
+    <meta name="description" content="Sign Language Translator - Bridge communication through ASL fingerspelling">
+    <title>SignBridge — ASL Translator</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-    <header>
-        <h1>Sign Language Translator</h1>
-        <a href="https://github.com/JashanMaan28/Sign-Language-Translator-Fingerspelling-Detector" target="_blank" class="github-icon">
-            <svg width="35" height="35" viewBox="0 0 98 98" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
-                    fill="currentColor" />
-            </svg>
-        </a>
+    <!-- Animated background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-noise"></div>
+
+    <!-- Floating hand decorations -->
+    <div class="floating-hands" aria-hidden="true">
+        <svg class="hand hand-1" viewBox="0 0 100 100" fill="none">
+            <path d="M50 10 C60 20, 70 30, 65 50 C60 70, 40 80, 30 70 C20 60, 25 40, 35 30 C45 20, 45 15, 50 10Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        <svg class="hand hand-2" viewBox="0 0 100 100" fill="none">
+            <path d="M30 50 Q50 20 70 50 Q50 80 30 50Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        <svg class="hand hand-3" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <circle cx="50" cy="50" r="15" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5"/>
+        </svg>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 5C25 8 30 15 28 25C26 35 15 38 10 30C5 22 8 12 15 8C18 6 18 5 20 5Z" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <circle cx="18" cy="20" r="3" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-name">SignBridge</span>
+                    <span class="logo-tagline">ASL Translator</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="https://github.com/JashanMaan28/Sign-Language-Translator-Fingerspelling-Detector"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="nav-link github-link"
+                   aria-label="View project on GitHub">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    <span>GitHub</span>
+                </a>
+            </nav>
+        </div>
     </header>
 
-    <main>
-        <div class="container">
+    <!-- Toast notification -->
+    <div id="toast" class="toast" role="alert" aria-live="polite" aria-atomic="true">
+        <div class="toast-icon"></div>
+        <span id="toast-message"></span>
+        <button class="toast-close" onclick="hideToast()" aria-label="Close notification">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
 
-            <!-- Left Panel -->
-            <section class="panel">
-                <h2>Sign Language to Text</h2>
-                <div class="camera-box">
-                    <img src="{{ url_for('video_feed') }}" width="100%">
-                </div>
-                <div class="button-group">
-                    <button onclick="startRecording()" class="record-btn">🔴 Record</button>
-                    <button onclick="stopRecording()" class="stop-btn">🟥 Stop</button>
-                </div>
-                <br>
-                <div class="prediction-section">
-                    <h3>Current Prediction</h3>
-                    <div id="prediction-box" class="prediction-box">
-                        <p>Predicted word will appear here...</p>
-                    </div>
-                </div>
-                <div class="output-section">
-                    <h3>Output Text</h3>
-                    <div id="output-box" class="output-box">
-                        <p>Translated text will appear here...</p>
-                    </div>
-                    <button onclick="speakText()" class="speak-btn">🔉 Speak Text</button>
-                </div>
-            </section>
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="loading-overlay" aria-hidden="true">
+        <div class="loader">
+            <div class="loader-hand">
+                <svg viewBox="0 0 60 60" fill="none">
+                    <path class="loader-path" d="M30 5C40 10 50 20 45 35C40 50 20 55 10 40C0 25 10 10 25 5C28 4 28 4 30 5Z" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
+            <p class="loader-text">Translating...</p>
+        </div>
+    </div>
 
-            <!-- Right Panel -->
-            <section class="panel">
-                <h2>Text to Sign Language</h2>
-                <div class="sign-output">
-                    <div id="sign-display" class="sign-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8ZM12 6C8.686 6 6 8.686 6 12C6 15.314 8.686 18 12 18C15.314 18 18 15.314 18 12C18 8.686 15.314 6 12 6Z"
-                                fill="currentColor" />
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 class="hero-title">
+                <span class="hero-title-line">Bridging</span>
+                <span class="hero-title-line hero-title-accent">Communication</span>
+            </h1>
+            <p class="hero-subtitle">Transform sign language to text and text to sign, creating connections that transcend barriers.</p>
+        </section>
+
+        <!-- Translator Panels -->
+        <div class="translator">
+            <!-- Sign to Text Panel -->
+            <article class="panel panel-sign-to-text" aria-labelledby="sign-to-text-heading">
+                <header class="panel-header">
+                    <div class="panel-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 18.5A6.5 6.5 0 0 0 18.5 12V7a6.5 6.5 0 0 0-13 0v5A6.5 6.5 0 0 0 12 18.5z"/>
+                            <path d="M12 18.5V22M8 22h8"/>
                         </svg>
                     </div>
+                    <div class="panel-title-group">
+                        <h2 id="sign-to-text-heading" class="panel-title">Sign → Text</h2>
+                        <p class="panel-description">Show your signs to the camera</p>
+                    </div>
+                </header>
+
+                <div class="camera-container">
+                    <div class="camera-frame">
+                        <img src="{{ url_for('video_feed') }}"
+                             alt="Live camera feed showing hand gesture detection"
+                             id="camera-feed"
+                             class="camera-feed">
+                        <div class="camera-overlay">
+                            <div class="camera-corners">
+                                <span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+                        <div class="recording-indicator" id="recording-indicator">
+                            <span class="recording-dot"></span>
+                            <span class="recording-text">Recording</span>
+                        </div>
+                        <button class="camera-refresh-btn" onclick="refreshVideoFeed()" title="Refresh camera feed" aria-label="Refresh camera feed">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 4v6h-6M1 20v-6h6"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <br>
-                <textarea id="text-input" placeholder="Enter text here (English alphabets only) . . ."></textarea>
-                <div class="button-group">
-                    <button onclick="convertText()" class="convert-text-btn">[ T ] Convert Text</button>
-                    <button onclick="convertSpeech()" class="convert-speech-btn">🎙️ Record Speech</button>
-                    <button onclick="stopConversion()" class="stop-btn">🔃 Convert Speech</button>
+
+                <div class="controls">
+                    <button onclick="startRecording()" class="btn btn-primary btn-record" id="record-btn" aria-label="Start recording">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="8"/>
+                        </svg>
+                        <span>Record</span>
+                    </button>
+                    <button onclick="stopRecording()" class="btn btn-secondary btn-stop" id="stop-btn" aria-label="Stop recording">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="6" y="6" width="12" height="12" rx="2"/>
+                        </svg>
+                        <span>Stop</span>
+                    </button>
                 </div>
-            </section>
+
+                <div class="output-section">
+                    <div class="output-card prediction-card">
+                        <span class="output-label">Current Sign</span>
+                        <div id="prediction-box" class="output-value prediction-value" aria-live="polite">—</div>
+                    </div>
+                    <div class="output-card result-card">
+                        <span class="output-label">Translated Text</span>
+                        <div id="output-box" class="output-value result-value" aria-live="polite">
+                            Your translated text will appear here...
+                        </div>
+                        <button onclick="speakText()" class="btn btn-ghost btn-speak" id="speak-btn" aria-label="Read text aloud">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                            </svg>
+                            <span>Speak</span>
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Divider -->
+            <div class="panel-divider">
+                <div class="divider-line"></div>
+                <div class="divider-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 7l4-4 4 4M8 17l4 4 4-4M12 3v18"/>
+                    </svg>
+                </div>
+                <div class="divider-line"></div>
+            </div>
+
+            <!-- Text to Sign Panel -->
+            <article class="panel panel-text-to-sign" aria-labelledby="text-to-sign-heading">
+                <header class="panel-header">
+                    <div class="panel-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+                        </svg>
+                    </div>
+                    <div class="panel-title-group">
+                        <h2 id="text-to-sign-heading" class="panel-title">Text → Sign</h2>
+                        <p class="panel-description">Convert your words to sign language</p>
+                    </div>
+                </header>
+
+                <div class="sign-display-container">
+                    <div class="sign-display" id="sign-display" aria-live="polite" aria-label="Sign language display">
+                        <div class="sign-placeholder">
+                            <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1">
+                                <path d="M40 10C55 15 65 30 60 50C55 70 25 75 15 55C5 35 15 15 35 10C38 9 38 9 40 10Z" opacity="0.3"/>
+                                <circle cx="35" cy="40" r="4" fill="currentColor" opacity="0.3"/>
+                            </svg>
+                            <p>Sign gestures will appear here</p>
+                        </div>
+                    </div>
+                    <div class="sign-progress" id="sign-progress">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <label for="text-input" class="input-label">Enter your message</label>
+                    <div class="textarea-wrapper">
+                        <textarea id="text-input"
+                                  class="text-input"
+                                  placeholder="Type something beautiful..."
+                                  maxlength="500"
+                                  aria-describedby="char-counter"></textarea>
+                        <div class="textarea-footer">
+                            <span id="char-counter" class="char-counter">
+                                <span id="char-count">0</span>/500
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button onclick="convertText()" class="btn btn-primary btn-convert" id="convert-text-btn" aria-label="Convert text to sign">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                        <span>Convert Text</span>
+                    </button>
+                    <button onclick="convertSpeech()" class="btn btn-accent btn-speech" id="convert-speech-btn" aria-label="Record speech">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
+                        </svg>
+                        <span>Voice Input</span>
+                    </button>
+                </div>
+            </article>
         </div>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Real-time</h3>
+                <p class="feature-desc">Instant translation as you sign</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">AI-Powered</h3>
+                <p class="feature-desc">Smart text correction</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Voice Output</h3>
+                <p class="feature-desc">Text-to-speech synthesis</p>
+            </div>
+        </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">Crafted with care by <strong>Team CodeCrushers</strong></p>
+            <p class="footer-note">Building bridges, one sign at a time.</p>
+        </div>
+    </footer>
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
